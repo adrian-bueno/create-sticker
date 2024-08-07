@@ -1,2 +1,6 @@
+import { fromImage } from './create-sticker';
+
 export * from './models/create-sticker-options';
-export * from './create-sticker';
+
+const CreateSticker = { fromImage };
+export default CreateSticker;
