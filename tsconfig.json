@@ -1,0 +1,23 @@
+{
+  "compileOnSave": false,
+  "compilerOptions": {
+    "outDir": "./dist",
+    "strict": true,
+    "noImplicitOverride": true,
+    "noPropertyAccessFromIndexSignature": true,
+    "noImplicitReturns": true,
+    "skipLibCheck": true,
+    "sourceMap": false,
+    "declaration": true,
+    "moduleResolution": "node",
+    "target": "ES6",
+    "module": "ES2022",
+    "useDefineForClassFields": false,
+    "lib": [
+      "ES2022",
+      "dom"
+    ]
+  },
+  "include": ["src"],
+  "exclude": ["node_modules", "dist"]
+}
