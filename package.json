@@ -1,0 +1,22 @@
+{
+  "name": "@devadri/create-sticker",
+  "version": "1.0.0",
+  "main": "dist/bundle.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "clean": "rm -rf dist",
+    "build": "node build.js",
+    "demo": "http-server -p 3000 -c-1 -o demo/index.html"
+  },
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "files": [
+    "dist/**/*"
+  ],
+  "devDependencies": {
+    "esbuild": "^0.23.0",
+    "http-server": "^14.1.1",
+    "typescript": "^5.5.4"
+  }
+}
