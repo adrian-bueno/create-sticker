@@ -1,7 +1,8 @@
 {
   "name": "@devadri/create-sticker",
   "version": "1.0.0",
-  "main": "dist/bundle.js",
+  "main": "dist/bundle.iife.js",
+  "module": "dist/bundle.esm.js",
   "types": "dist/index.d.ts",
   "scripts": {
     "clean": "rm -rf dist",
