@@ -36,7 +36,7 @@ npm install @devadri/create-sticker
 <script src="https://unpkg.com/@devadri/create-sticker@{{ version }}/dist/bundle.iife.js"></script>
 <script>
   async function modifyImage(img) {
-    const stickerImgSrc = await CreateSticker.default.fromImage(img.src, { strokeWidth: 20, strokeColor: "black", padding: 20 });
+    const stickerImgSrc = await CreateSticker.createSticker(img.src, { strokeWidth: 20, strokeColor: "black", padding: 20 });
     img.src = stickerImgSrc;
   }
 </script>
@@ -45,17 +45,16 @@ npm install @devadri/create-sticker
 ### ESM / TypeScript
 
 ```ts
-import CreateSticker from '@devadri/create-sticker';
+import { createSticker } from '@devadri/create-sticker';
 
 async function modifyImage(img) {
-  const stickerImgSrc = await CreateSticker.fromImage(img.src, { strokeWidth: 20, strokeColor: "black", padding: 20 });
+  const stickerImgSrc = await createSticker(img.src, { strokeWidth: 20, strokeColor: "black", padding: 20 });
   img.src = stickerImgSrc;
 }
 ```
 
 ```ts
-import CreateSticker from '@devadri/create-sticker';
-import { CreateStickerOptions } from '@devadri/create-sticker';
+import { createSticker, CreateStickerOptions } from '@devadri/create-sticker';
 
 async function modifyImage(img) {
   const options: CreateStickerOptions = {
@@ -63,7 +62,7 @@ async function modifyImage(img) {
     strokeColor: "black",
     padding: 20
   }
-  const stickerImgSrc = await CreateSticker.fromImage(img.src, options);
+  const stickerImgSrc = await createSticker(img.src, options);
   img.src = stickerImgSrc;
 }
 ```

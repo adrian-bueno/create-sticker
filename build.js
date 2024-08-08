@@ -25,17 +25,22 @@ esbuild.build({
 });
 
 // ESM bundle
-esbuild.build({
-  entryPoints: ['src/index.ts'],
-  bundle: true,
-  outfile: 'dist/bundle.esm.js',
-  platform: 'browser',
-  format: 'esm',
-  target: ['es6'],
-  sourcemap: true,
-  minify: true,
-  define: { 'process.env.NODE_ENV': '"production"' },
-}).catch((error) => {
-  console.error(error);
-  process.exit(1);
-});
+esbuild
+  .build({
+    entryPoints: ["src/index.ts"],
+    bundle: true,
+    outfile: "dist/bundle.esm.mjs",
+    outExtension: { ".js": ".mjs" },
+    tsconfig: "./tsconfig.json",
+    platform: "browser",
+    format: "esm",
+    target: ["es6"],
+    platform: "neutral",
+    sourcemap: true,
+    minify: true,
+    define: { "process.env.NODE_ENV": '"production"' },
+  })
+  .catch((error) => {
+    console.error(error);
+    process.exit(1);
+  });

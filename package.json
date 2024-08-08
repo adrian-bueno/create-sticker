@@ -1,19 +1,19 @@
 {
   "name": "@devadri/create-sticker",
   "version": "1.0.0",
-  "main": "dist/bundle.iife.js",
-  "module": "dist/bundle.esm.js",
-  "types": "dist/types/index.d.ts",
+  "author": "Adrián Bueno <devadri.com>",
+  "license": "Unlicense license",
+  "description": "Library that adds a sticker effect to images with transparent backgrounds",
   "homepage": "https://github.com/adrian-bueno/create-sticker",
   "readme": "https://github.com/adrian-bueno/create-sticker/README.md",
+  "main": "dist/bundle.iife.js",
+  "module": "dist/bundle.esm.mjs",
+  "types": "dist/types/index.d.ts",
   "scripts": {
     "clean": "rm -rf dist",
     "build": "node build.js",
     "demo": "http-server -p 3000 -c-1 -o demo/index.html"
   },
-  "author": "Adrián Bueno <devadri.com>",
-  "license": "Unlicense license",
-  "description": "",
   "files": [
     "dist/**/*"
   ],
