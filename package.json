@@ -6,17 +6,16 @@
   "description": "Library that adds a sticker effect to images with transparent backgrounds",
   "homepage": "https://github.com/adrian-bueno/create-sticker",
   "readme": "https://github.com/adrian-bueno/create-sticker/README.md",
-  "main": "dist/bundle.iife.js",
-  "module": "dist/bundle.esm.mjs",
-  "types": "dist/types/index.d.ts",
+  "main": "bundle.iife.js",
+  "module": "bundle.esm.mjs",
+  "types": "types/index.d.ts",
   "scripts": {
     "clean": "rm -rf dist",
     "build": "node build.js",
+    "publish": "cd dist && npm publish",
     "demo": "http-server -p 3000 -c-1 -o demo/index.html"
   },
-  "files": [
-    "dist/**/*"
-  ],
+  "files": ["*"],
   "devDependencies": {
     "esbuild": "^0.23.0",
     "http-server": "^14.1.1",
