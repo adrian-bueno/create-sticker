@@ -9,6 +9,10 @@
   "main": "bundle.iife.js",
   "module": "bundle.esm.mjs",
   "types": "types/index.d.ts",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/adrian-bueno/create-sticker"
+  },
   "scripts": {
     "clean": "rm -rf dist",
     "build": "node build.js",
