@@ -25,6 +25,7 @@
       font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
       display: flex;
       background: #ddd;
+      /* background: #fff; */
       color: black;
     }
 
@@ -134,7 +135,7 @@
         const src = e.target.result;
         sourceImage.src = src;
 
-        CreateSticker.default.fromImage(src, { strokeWidth: 20, strokeColor: "black", padding: 20 })
+        CreateSticker.default.fromImage(src, { strokeWidth: 50, strokeColor: "#c1ad00", padding: 1 })
           .then(stickerSrc => resultImage.src = stickerSrc);
       };
 
