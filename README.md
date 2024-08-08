@@ -24,7 +24,7 @@ npm install @devadri/create-sticker
 <script src="create-sticker/bundle.iife.js"></script>
 <script>
   async function modifyImage(img) {
-    const stickerImgSrc = await CreateSticker.fromImage(img.src, { strokeWidth: 20, strokeColor: "black", padding: 20 });
+    const stickerImgSrc = await CreateSticker.default.fromImage(img.src, { strokeWidth: 20, strokeColor: "black", padding: 20 });
     img.src = stickerImgSrc;
   }
 </script>

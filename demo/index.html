@@ -134,7 +134,7 @@
         const src = e.target.result;
         sourceImage.src = src;
 
-        CreateSticker.fromImage(src, { strokeWidth: 20, strokeColor: "black", padding: 20 })
+        CreateSticker.default.fromImage(src, { strokeWidth: 20, strokeColor: "black", padding: 20 })
           .then(stickerSrc => resultImage.src = stickerSrc);
       };
 
