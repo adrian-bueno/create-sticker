@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "main": "dist/bundle.iife.js",
   "module": "dist/bundle.esm.js",
-  "types": "dist/index.d.ts",
+  "types": "dist/types/index.d.ts",
   "homepage": "https://github.com/adrian-bueno/create-sticker",
   "readme": "https://github.com/adrian-bueno/create-sticker/README.md",
   "scripts": {
