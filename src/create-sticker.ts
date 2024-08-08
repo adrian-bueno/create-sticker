@@ -6,7 +6,7 @@ import { loadImage } from "./load-image";
 import { CreateStickerOptions, DiscreteElement, ImageCanvas } from "./models";
 
 
-export async function fromImage(imageSrc: string, options?: CreateStickerOptions): Promise<string> {
+export async function createSticker(imageSrc: string, options?: CreateStickerOptions): Promise<string> {
   const imageCanvas = await loadImage(imageSrc, options);
 
   // Move every discrete element from the main canvas to a separate canvas
