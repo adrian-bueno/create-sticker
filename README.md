@@ -74,9 +74,12 @@ async function modifyImage(img) {
 {
   "strokeWidth": 20,
   "strokeColor": "white",
-  "padding": 1 // minimum value = 1
+  "padding": 1
 }
 ```
+
+`padding` minimum values is `1`.
+
 
 ## Demo
 
@@ -94,3 +97,8 @@ npm run demo
 ![Demo screenshot 5](./docs/demo-screenshot-5.png)
 ![Demo screenshot 3](./docs/demo-screenshot-3.png)
 ![Demo screenshot 4](./docs/demo-screenshot-4.png)
+
+
+## License
+
+[Unlicense license](./LICENSE.md)
