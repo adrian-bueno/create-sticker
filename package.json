@@ -4,13 +4,15 @@
   "main": "dist/bundle.iife.js",
   "module": "dist/bundle.esm.js",
   "types": "dist/index.d.ts",
+  "homepage": "https://github.com/adrian-bueno/create-sticker",
+  "readme": "https://github.com/adrian-bueno/create-sticker/README.md",
   "scripts": {
     "clean": "rm -rf dist",
     "build": "node build.js",
     "demo": "http-server -p 3000 -c-1 -o demo/index.html"
   },
-  "author": "",
-  "license": "ISC",
+  "author": "Adrián Bueno <devadri.com>",
+  "license": "Unlicense license",
   "description": "",
   "files": [
     "dist/**/*"
