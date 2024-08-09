@@ -19,7 +19,7 @@ It uses HTML Canvas, so it only works in the browser (and not in Node.js).
 ### Browser
 
 ```html
-<script src="https://unpkg.com/@devadri/create-sticker@{{ version }}/dist/bundle.iife.js"></script>
+<script src="https://unpkg.com/@devadri/create-sticker@{{ version }}/bundle.iife.js"></script>
 ```
 
 ### npm
