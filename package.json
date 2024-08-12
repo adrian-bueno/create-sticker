@@ -1,6 +1,6 @@
 {
   "name": "@devadri/create-sticker",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "author": "Adrián Bueno <devadri.com>",
   "license": "Unlicense license",
   "description": "Library that adds a sticker effect to images with transparent backgrounds",
@@ -13,6 +13,23 @@
     "type": "git",
     "url": "https://github.com/adrian-bueno/create-sticker"
   },
+  "keywords": [
+    "sticker",
+    "stickers",
+    "border",
+    "image",
+    "png",
+    "webp",
+    "effect",
+    "create",
+    "javascript",
+    "angular",
+    "react",
+    "vue",
+    "browser",
+    "editor",
+    "image-editor"
+  ],
   "scripts": {
     "clean": "rm -rf dist",
     "build": "node build.js",
