@@ -29,4 +29,9 @@ function addStickerLayer(elem: DiscreteElement, imageCanvas: ImageCanvas) {
   ctx.strokeStyle = imageCanvas.options.strokeColor!;
   ctx.lineWidth = imageCanvas.options.strokeWidth!;
   ctx.stroke();
+
+  if (imageCanvas.options.fillHoles) {
+    ctx.fillStyle = imageCanvas.options.strokeColor!;
+    ctx.fill();
+  }
 }

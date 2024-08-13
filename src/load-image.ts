@@ -47,5 +47,6 @@ function getPadding(options?: CreateStickerOptions): number {
 const defaultOptions: CreateStickerOptions = {
   strokeColor: "white",
   strokeWidth: 20,
-  padding: 1
+  padding: 1,
+  fillHoles: true
 }

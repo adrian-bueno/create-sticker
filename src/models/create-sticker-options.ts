@@ -1,8 +1,10 @@
 export interface CreateStickerOptions {
-  /** default: 10 */
+  /** Default: 10 */
   strokeWidth?: number;
-  /** default: "white" */
+  /** Default: "white" */
   strokeColor?: string;
-  /** default: 1 */
+  /** Image padding. Default: 1 */
   padding?: number;
+  /** If an object has transparent holes, fill the holes with the strokeColor. Default: true */
+  fillHoles?: boolean;
 }
