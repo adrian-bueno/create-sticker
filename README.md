@@ -9,7 +9,7 @@
 
 Tested with `.png`, `.webp` and `.jpg`.
 
-Customize: `stroke color`, `stroke thickness` and `image padding`.
+Customize: `stroke color`, `stroke thickness`, `fill holes` and `image padding`.
 
 It uses HTML Canvas, so it only works in the browser (and not in Node.js).
 
@@ -33,10 +33,16 @@ npm install @devadri/create-sticker
 ### Browser
 
 ```html
-<script src="https://unpkg.com/@devadri/create-sticker@{{ version }}/dist/bundle.iife.js"></script>
+<script src="https://unpkg.com/@devadri/create-sticker@1.1.0/dist/bundle.iife.js"></script>
 <script>
   async function modifyImage(img) {
-    const stickerImgSrc = await CreateSticker.createSticker(img.src, { strokeWidth: 20, strokeColor: "black", padding: 20 });
+    const options = {
+      strokeWidth: 20,
+      strokeColor: "black",
+      padding: 20,
+      fillHoles: true
+    }
+    const stickerImgSrc = await CreateSticker.createSticker(img.src, options);
     img.src = stickerImgSrc;
   }
 </script>
@@ -45,22 +51,14 @@ npm install @devadri/create-sticker
 ### ESM / TypeScript
 
 ```ts
-import { createSticker } from '@devadri/create-sticker';
-
-async function modifyImage(img) {
-  const stickerImgSrc = await createSticker(img.src, { strokeWidth: 20, strokeColor: "black", padding: 20 });
-  img.src = stickerImgSrc;
-}
-```
-
-```ts
 import { createSticker, CreateStickerOptions } from '@devadri/create-sticker';
 
 async function modifyImage(img) {
   const options: CreateStickerOptions = {
     strokeWidth: 20,
     strokeColor: "black",
-    padding: 20
+    padding: 20,
+    fillHoles: true
   }
   const stickerImgSrc = await createSticker(img.src, options);
   img.src = stickerImgSrc;
@@ -73,7 +71,8 @@ async function modifyImage(img) {
 {
   "strokeWidth": 20,
   "strokeColor": "white",
-  "padding": 1
+  "padding": 1,
+  "fillHoles": true
 }
 ```
 
@@ -93,9 +92,11 @@ npm run demo
 
 ![Demo screenshot 1](./docs/demo-screenshot-1.png)
 ![Demo screenshot 2](./docs/demo-screenshot-2.png)
+![Demo screenshot 6](./docs/demo-screenshot-6.png)
 ![Demo screenshot 5](./docs/demo-screenshot-5.png)
 ![Demo screenshot 3](./docs/demo-screenshot-3.png)
 ![Demo screenshot 4](./docs/demo-screenshot-4.png)
+![Demo screenshot 7](./docs/demo-screenshot-7.png)
 
 
 ## License

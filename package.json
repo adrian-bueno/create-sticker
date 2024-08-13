@@ -1,6 +1,6 @@
 {
   "name": "@devadri/create-sticker",
-  "version": "1.0.1",
+  "version": "1.1.0",
   "author": "Adrián Bueno <devadri.com>",
   "license": "Unlicense license",
   "description": "Library that adds a sticker effect to images with transparent backgrounds",
