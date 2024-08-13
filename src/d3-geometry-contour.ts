@@ -1,3 +1,11 @@
+// markE, the person that wrote the Stack Overflow answer,
+// took this code from the d3js library (in 2014).
+// The original code is located here:
+// https://github.com/d3/d3-contour
+// at version v0.0.1:
+// https://github.com/d3/d3-contour/blob/v0.0.1/src/contour.js
+
+
 import { ImageCanvas, Point2D } from "./models";
 
 // lookup tables for marching directions
