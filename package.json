@@ -11,7 +11,7 @@
   "types": "types/index.d.ts",
   "repository": {
     "type": "git",
-    "url": "https://github.com/adrian-bueno/create-sticker"
+    "url": "git+https://github.com/adrian-bueno/create-sticker.git"
   },
   "keywords": [
     "sticker",
