@@ -2,6 +2,7 @@
   "compileOnSave": false,
   "compilerOptions": {
     "outDir": "./dist",
+    "rootDir": "./src",
     "strict": true,
     "noImplicitOverride": true,
     "noPropertyAccessFromIndexSignature": true,
@@ -11,7 +12,7 @@
     "declaration": true,
     "emitDeclarationOnly": true,
     "declarationDir": "./dist/types",
-    "moduleResolution": "node",
+    "moduleResolution": "bundler",
     "target": "ES6",
     "module": "ES2022",
     "useDefineForClassFields": false,
