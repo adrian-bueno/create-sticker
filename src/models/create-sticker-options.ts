@@ -1,5 +1,5 @@
 export interface CreateStickerOptions {
-  /** Default: 10 */
+  /** Default: 20 */
   strokeWidth?: number;
   /** Default: "white" */
   strokeColor?: string;
