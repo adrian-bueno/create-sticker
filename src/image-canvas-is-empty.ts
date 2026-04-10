@@ -12,7 +12,7 @@ export function imageCanvasIsEmpty(imageCanvas: ImageCanvas): boolean {
   const imageData = ctx.getImageData(0, 0, imageCanvas.width, imageCanvas.height);
   const data = imageData.data;
 
-  for (var i = 0; i < data.length; i += 4) {
+  for (let i = 0; i < data.length; i += 4) {
     if (data[i + 3] > 0) {
       return false;
     }
