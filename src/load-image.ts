@@ -12,8 +12,9 @@ export function loadImage(imageSrc: string, options?: CreateStickerOptions): Pro
   });
 }
 
-// Load the image in a canvas with a 1px transparent border
-// We add the border to make the algorithm work with any image type
+// Load the image in a canvas with a transparent border.
+// The border ensures the contour algorithm works and that
+// the sticker stroke is not clipped at the edges.
 function buildImageCanvas(img: HTMLImageElement, options?: CreateStickerOptions): ImageCanvas {
   const canvas = document.createElement('canvas');
   const ctx = canvas.getContext('2d', { willReadFrequently: true })!;
@@ -24,7 +25,7 @@ function buildImageCanvas(img: HTMLImageElement, options?: CreateStickerOptions)
   canvas.height = img.height + padding*2;
 
   // Draw the image on canvas
-  ctx.drawImage(img, padding, padding, img.width - padding, img.height - padding);
+  ctx.drawImage(img, padding, padding);
 
   return {
     img,
@@ -38,10 +39,11 @@ function buildImageCanvas(img: HTMLImageElement, options?: CreateStickerOptions)
 }
 
 function getPadding(options?: CreateStickerOptions): number {
-  if (!options?.padding || options.padding! < 1)
-    return defaultOptions.padding!;
+  if (options?.padding != null && options.padding >= 1)
+    return options.padding;
 
-  return options.padding;
+  const strokeWidth = options?.strokeWidth ?? defaultOptions.strokeWidth!;
+  return Math.max(1, Math.ceil(strokeWidth / 2));
 }
 
 const defaultOptions: CreateStickerOptions = {

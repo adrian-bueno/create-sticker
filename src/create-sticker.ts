@@ -15,26 +15,20 @@ export async function createSticker(imageSrc: string, options?: CreateStickerOpt
 
   const elems = splitIntoDiscreteElements(imageCanvas);
 
-  addStickerEffectToDiscreteElements(elems, imageCanvas);
+  await addStickerEffectToDiscreteElements(elems, imageCanvas);
 
   const stickerCanvas = joinDiscreteElementsInNewCanvas(elems, imageCanvas);
 
   // Draw original image on top of stickerCanvas for a better result
   const stickerCanvasCtx = stickerCanvas.getContext('2d')!;
-  const w = imageCanvas.img.width;
-  const h = imageCanvas.img.height;
-  const p = imageCanvas.padding * 2;
-  stickerCanvasCtx.drawImage(imageCanvas.img, p, p, w - p, h - p);
+  const p = imageCanvas.padding;
+  stickerCanvasCtx.drawImage(imageCanvas.img, p, p);
 
   // Get the data URL of the resized image
   return stickerCanvas.toDataURL('image/png', 1); // 1 is the quality from 0 to 1
 }
 
 function joinDiscreteElementsInNewCanvas(elems: DiscreteElement[], imageCanvas: ImageCanvas): HTMLCanvasElement {
-  const w = imageCanvas.width;
-  const h = imageCanvas.height;
-  const p = imageCanvas.padding;
-
   const canvas = document.createElement('canvas');
 
   canvas.width = imageCanvas.width;
@@ -43,7 +37,7 @@ function joinDiscreteElementsInNewCanvas(elems: DiscreteElement[], imageCanvas: 
   const ctx = canvas.getContext('2d')!;
 
   for (let i = 0; i < elems.length; i++) {
-    ctx.drawImage(elems[i].canvas, p, p, w - p, h - p);
+    ctx.drawImage(elems[i].canvas, 0, 0);
   }
 
   return canvas;

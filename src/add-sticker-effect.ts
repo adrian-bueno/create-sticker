@@ -1,22 +1,22 @@
 import { defineGeometryPath } from "./define-geometry-path";
 import { DiscreteElement, ImageCanvas } from "./models";
 
-export function addStickerEffectToDiscreteElements(elems: DiscreteElement[], imageCanvas: ImageCanvas) {
-  elems.forEach(el => addStickerEffect(el, imageCanvas));
+export async function addStickerEffectToDiscreteElements(elems: DiscreteElement[], imageCanvas: ImageCanvas) {
+  await Promise.all(elems.map(el => addStickerEffect(el, imageCanvas)));
 }
 
-function addStickerEffect(elem: DiscreteElement, imageCanvas: ImageCanvas) {
+function addStickerEffect(elem: DiscreteElement, imageCanvas: ImageCanvas): Promise<void> {
   const url = elem.canvas.toDataURL();
   const ctx = elem.canvas.getContext("2d")!;
 
   addStickerLayer(elem, imageCanvas);
 
-  const img = new Image();
-  const w = imageCanvas.width;
-  const h = imageCanvas.height;
-  const p = imageCanvas.padding;
-  img.onload = () => ctx.drawImage(img, p, p, w, h);
-  img.src = url;
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    img.onload = () => { ctx.drawImage(img, 0, 0); resolve(); };
+    img.onerror = () => reject(new Error("Failed to load element image"));
+    img.src = url;
+  });
 }
 
 function addStickerLayer(elem: DiscreteElement, imageCanvas: ImageCanvas) {
