@@ -36,10 +36,12 @@
     "publish": "cd dist && npm publish",
     "demo": "http-server -p 3000 -c-1 -o demo/index.html"
   },
-  "files": ["*"],
+  "files": [
+    "*"
+  ],
   "devDependencies": {
-    "esbuild": "^0.23.0",
+    "esbuild": "^0.28.0",
     "http-server": "^14.1.1",
-    "typescript": "^5.5.4"
+    "typescript": "^6.0.2"
   }
 }
