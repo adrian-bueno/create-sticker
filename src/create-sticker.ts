@@ -104,7 +104,6 @@ function removeDiscreteElementFromCanvas(imageCanvas: ImageCanvas, elem: Discret
   defineGeometryPath(ctx, elem.points);
   ctx.save();
   ctx.clip();
-  ctx.globalCompositeOperation = "destination-out";
   ctx.clearRect(0, 0, imageCanvas.width, imageCanvas.height);
   ctx.restore();
 }
