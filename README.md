@@ -65,15 +65,23 @@ async function modifyImage(img) {
 }
 ```
 
-### Default options
+## API
 
-```json
-{
-  "strokeWidth": 20,
-  "strokeColor": "white",
-  "fillHoles": true
-}
-```
+### `createSticker(imageSrc, options?)`
+
+- `imageSrc`: `string`. Any URL an `<img>` can load (http(s), data URL, blob URL).
+- Returns `Promise<string>`: a PNG data URL of the sticker image.
+
+### Options
+
+All options are optional.
+
+| Option | Type | Default | Description |
+|---|---|---|---|
+| `strokeWidth` | `number` | `20` | Width of the outline, in pixels. |
+| `strokeColor` | `string` | `"white"` | Any CSS color. |
+| `fillHoles` | `boolean` | `true` | Fill transparent holes inside an object with `strokeColor`. |
+| `padding` | `number` | `Math.ceil(strokeWidth / 2)` | Transparent space added around the image, in pixels (see below). |
 
 `padding` is the transparent space added around the image, so the stroke is not clipped at the edges. The output image is `padding * 2` pixels wider and taller than the input.
 
