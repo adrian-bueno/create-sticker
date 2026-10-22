@@ -30,6 +30,11 @@ export interface CreateStickerOptions {
   /** If an object has transparent holes, fill the holes with the strokeColor. Default: true */
   fillHoles?: boolean;
   /**
+   * When `fillHoles` is false, also stroke the inner edges of transparent holes
+   * and the outlines of elements inside holes. Default: false
+   */
+  strokeHoles?: boolean;
+  /**
    * Pixels with an alpha value (0-255) less than or equal to this are treated as
    * transparent when finding outlines, so faint noise or antialiasing halos do not
    * get their own sticker outline. They are still drawn in the result. Default: 0

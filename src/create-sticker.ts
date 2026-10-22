@@ -1,7 +1,9 @@
 import { addShadow } from "./add-shadow";
 import { addOutlineLayer, addStickerLayer, totalStrokeWidth } from "./add-sticker-effect";
 import { d3GeometryContour, d3GeometryContourStart } from "./d3-geometry-contour";
+import { boundingBox } from "./bounding-box";
 import { defineGeometryPath } from "./define-geometry-path";
+import { findInnerContours } from "./inner-contours";
 import { loadImage } from "./load-image";
 import { CreateStickerOptions, DiscreteElement, ImageCanvas, StickerImageSource } from "./models";
 
@@ -37,11 +39,13 @@ export async function createStickerCanvas(image: StickerImageSource, options?: C
 
   // Draw the extra outlines first, outermost first and for all elements at
   // once, so touching elements share them like a single sticker
-  const { strokeWidth, outlines = [] } = imageCanvas.options;
+  const { strokeWidth, strokeColor, outlines = [] } = imageCanvas.options;
   for (let i = outlines.length - 1; i >= 0; i--) {
     const width = totalStrokeWidth(strokeWidth!, outlines.slice(0, i + 1));
     for (const elem of elems) {
-      addOutlineLayer(stickerCanvasCtx, elem.points, width, outlines[i].color);
+      for (const contour of [elem.points, ...elem.innerContours]) {
+        addOutlineLayer(stickerCanvasCtx, contour, width, outlines[i].color);
+      }
     }
   }
 
@@ -51,6 +55,9 @@ export async function createStickerCanvas(image: StickerImageSource, options?: C
   for (const elem of elems) {
     drawDiscreteElement(stickerCanvasCtx, imageCanvas, elem);
     addStickerLayer(stickerCanvasCtx, elem.points, imageCanvas.options);
+    for (const contour of elem.innerContours) {
+      addOutlineLayer(stickerCanvasCtx, contour, strokeWidth!, strokeColor!);
+    }
     drawDiscreteElement(stickerCanvasCtx, imageCanvas, elem);
   }
 
@@ -90,13 +97,21 @@ function findDiscreteElements(imageCanvas: ImageCanvas): DiscreteElement[] {
 
   const { width, height } = imageCanvas;
   const alphaThreshold = imageCanvas.options.alphaThreshold ?? 0;
+  const strokeHoles = !!imageCanvas.options.strokeHoles && !imageCanvas.options.fillHoles;
 
   let start = d3GeometryContourStart(data, width, height, alphaThreshold);
 
   while (start) {
     // get the point-path that outlines a discrete element
     const points = d3GeometryContour(data, width, alphaThreshold, start);
-    const elem = { points, bounds: boundingBox(points) };
+    const bounds = boundingBox(points);
+
+    // Holes and nested elements are read before the element is removed
+    const innerContours = strokeHoles
+      ? findInnerContours(points, bounds, (x, y) => data[(y * width + x) * 4 + 3] > alphaThreshold)
+      : [];
+
+    const elem = { points, bounds, innerContours };
 
     elems.push(elem);
     removeDiscreteElementFromCanvas(imageCanvas, data, elem);
@@ -123,15 +138,4 @@ function removeDiscreteElementFromCanvas(imageCanvas: ImageCanvas, data: Uint8Cl
     const rowStart = row * rowLength;
     data.set(area.subarray(rowStart, rowStart + rowLength), ((y + row) * imageCanvas.width + x) * 4);
   }
-}
-
-function boundingBox(points: DiscreteElement['points']): DiscreteElement['bounds'] {
-  let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
-  for (const [x, y] of points) {
-    if (x < minX) minX = x;
-    if (y < minY) minY = y;
-    if (x > maxX) maxX = x;
-    if (y > maxY) maxY = y;
-  }
-  return { x: minX, y: minY, width: maxX - minX, height: maxY - minY };
 }

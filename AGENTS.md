@@ -22,6 +22,8 @@ Guidance for AI coding agents working on this repository.
 
 Other files:
 - `src/define-geometry-path.ts`: builds a canvas path from contour points.
+- `src/inner-contours.ts`: finds the outlines of holes and nested elements (for `strokeHoles`) on per-element masks, with a scanline polygon rasterizer.
+- `src/add-shadow.ts`: draws the finished sticker with a drop shadow on a larger canvas.
 - `src/models/`: public and internal types. `src/index.ts` exports the public API: `createSticker`, `createStickerBlob`, `createStickerCanvas` and the `CreateStickerOptions` and `StickerImageSource` types. Everything else is internal.
 
 ## Commands

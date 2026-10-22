@@ -93,6 +93,7 @@ All options are optional.
 | `strokeWidth` | `number` | `20` | Width of the outline, in pixels. |
 | `strokeColor` | `string` | `"white"` | Any CSS color. |
 | `fillHoles` | `boolean` | `true` | Fill transparent holes inside an object with `strokeColor`. |
+| `strokeHoles` | `boolean` | `false` | When `fillHoles` is `false`, also stroke the inner edges of holes and the elements inside them. |
 | `padding` | `number` | half the stroke width (plus `outlines`) | Transparent space added around the image, in pixels (see below). |
 | `alphaThreshold` | `number` | `0` | Pixels with alpha (0-255) at or below this value are ignored when finding outlines, so faint noise or antialiasing halos do not get their own outline. They are still drawn. Try `10`-`20` for photos or lossy images. |
 | `crossOrigin` | `"anonymous" \| "use-credentials" \| null` | `"anonymous"` | CORS mode used to load the image. Use `null` to not set it. |

@@ -320,3 +320,54 @@ describe('outlines option', () => {
     expect(await pixelAt(result, 10 + 27, 10 + 17)).toEqual([255, 255, 255, 255]);
   });
 });
+
+describe('strokeHoles option', () => {
+  // A 40x40 square ring with a 20x20 hole, optionally with a 4x4 dot in the hole
+  function ring(withDot: boolean): string {
+    const canvas = document.createElement('canvas');
+    canvas.width = 60;
+    canvas.height = 60;
+    const ctx = canvas.getContext('2d')!;
+    ctx.fillStyle = 'red';
+    ctx.fillRect(10, 10, 40, 40);
+    ctx.clearRect(20, 20, 20, 20);
+    if (withDot)
+      ctx.fillRect(28, 28, 4, 4);
+    return canvas.toDataURL();
+  }
+
+  const options: CreateStickerOptions = { strokeWidth: 6, strokeColor: 'black', fillHoles: false, strokeHoles: true };
+  const pad = 3;
+
+  async function alphaAt(src: string, x: number, y: number): Promise<number> {
+    const img = await decodeImage(src);
+    return (await readPixels(src))[((y + pad) * img.width + (x + pad)) * 4 + 3];
+  }
+
+  it('strokes the inner edge of holes', async () => {
+    const result = await createSticker(ring(false), options);
+    expect(await alphaAt(result, 21, 30)).toBe(255);
+    expect(await alphaAt(result, 30, 30)).toBe(0);
+
+    const withoutOption = await createSticker(ring(false), { ...options, strokeHoles: false });
+    expect(await alphaAt(withoutOption, 21, 30)).toBe(0);
+  });
+
+  it('strokes elements inside holes', async () => {
+    const result = await createSticker(ring(true), options);
+    expect(await alphaAt(result, 26, 30)).toBe(255);
+    expect(await alphaAt(result, 24, 30)).toBe(0);
+
+    const withoutOption = await createSticker(ring(true), { ...options, strokeHoles: false });
+    expect(await alphaAt(withoutOption, 26, 30)).toBe(0);
+  });
+
+  it('is ignored when fillHoles is true', async () => {
+    expect(await summarizePixels(await createSticker(ring(true), { ...options, fillHoles: true })))
+      .toEqual(await summarizePixels(await createSticker(ring(true), { ...options, fillHoles: true, strokeHoles: false })));
+  });
+
+  it('matches the snapshot for an image with holes', async () => {
+    expect(await summarizePixels(await createSticker(angularWithHoles, { fillHoles: false, strokeHoles: true, strokeColor: 'black' }))).toMatchSnapshot();
+  });
+});

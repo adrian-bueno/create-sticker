@@ -175,3 +175,11 @@ exports[`shadow option > matches the shadow snapshot 1`] = `
   "width": 556,
 }
 `;
+
+exports[`strokeHoles option > matches the snapshot for an image with holes 1`] = `
+{
+  "height": 1940,
+  "sha256": "b12911267a1fc7930c9ace664e417e562990abc11a46a1278014bfd37e2065d3",
+  "width": 1940,
+}
+`;
