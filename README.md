@@ -83,11 +83,17 @@ All options are optional.
 | `fillHoles` | `boolean` | `true` | Fill transparent holes inside an object with `strokeColor`. |
 | `padding` | `number` | `Math.ceil(strokeWidth / 2)` | Transparent space added around the image, in pixels (see below). |
 | `alphaThreshold` | `number` | `0` | Pixels with alpha (0-255) at or below this value are ignored when finding outlines, so faint noise or antialiasing halos do not get their own outline. They are still drawn. Try `10`-`20` for photos or lossy images. |
+| `crossOrigin` | `"anonymous" \| "use-credentials" \| null` | `"anonymous"` | CORS mode used to load the image. Use `null` to not set it. |
 
 `padding` is the transparent space added around the image, so the stroke is not clipped at the edges. The output image is `padding * 2` pixels wider and taller than the input.
 
 - When `padding` is not set (or is less than `1`), it defaults to half the stroke width (`Math.ceil(strokeWidth / 2)`, minimum `1`).
 - When `padding` is set to `1` or more, that value is used as is. A value smaller than `strokeWidth / 2` can clip the stroke at the image edges.
+
+
+### Remote images (CORS)
+
+The image pixels must be readable, so images from another origin must be served with CORS headers (`Access-Control-Allow-Origin`). Without them, `createSticker` rejects with an explanatory error. Images loaded from data URLs, blob URLs or the same origin always work.
 
 
 ## Demo

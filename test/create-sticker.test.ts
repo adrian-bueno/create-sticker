@@ -105,3 +105,29 @@ describe('alphaThreshold option', () => {
     expect(a[faintIndex + 3]).toBe(8);
   });
 });
+
+describe('crossOrigin option', () => {
+  // Same server, but a different origin (localhost <-> 127.0.0.1).
+  // The Vite test server allows CORS requests from localhost origins.
+  function crossOriginURL(url: string): string {
+    const crossOrigin = new URL(url, location.href);
+    crossOrigin.hostname = location.hostname === 'localhost' ? '127.0.0.1' : 'localhost';
+    return crossOrigin.href;
+  }
+
+  it('reads remote images with CORS by default', async () => {
+    const remote = await createSticker(crossOriginURL(hand));
+    const local = await createSticker(hand);
+    expect(await summarizePixels(remote)).toEqual(await summarizePixels(local));
+  });
+
+  it('rejects with a clear error when the image taints the canvas', async () => {
+    await expect(createSticker(crossOriginURL(hand), { crossOrigin: null })).rejects.toThrow('cross-origin image without CORS access');
+  });
+
+  it('works with data URLs when crossOrigin is null', async () => {
+    const image = drawTestImage(30, 30, [[5, 5, 20]]);
+    expect(await summarizePixels(await createSticker(image, { crossOrigin: null })))
+      .toEqual(await summarizePixels(await createSticker(image)));
+  });
+});

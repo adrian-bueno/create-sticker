@@ -4,9 +4,20 @@ export function loadImage(imageSrc: string, options?: CreateStickerOptions): Pro
   return new Promise((resolve, reject) => {
     const img = new Image();
 
-    img.onload = () => resolve(buildImageCanvas(img, options));
+    img.onload = () => {
+      try {
+        resolve(buildImageCanvas(img, options));
+      } catch (error) {
+        reject(error);
+      }
+    };
 
     img.onerror = () => reject(new Error("Error loading image"));
+
+    // Request remote images with CORS so their pixels can be read
+    const crossOrigin = options?.crossOrigin === undefined ? defaultOptions.crossOrigin : options.crossOrigin;
+    if (crossOrigin != null)
+      img.crossOrigin = crossOrigin;
 
     img.src = imageSrc;
   });
@@ -27,6 +38,8 @@ function buildImageCanvas(img: HTMLImageElement, options?: CreateStickerOptions)
   // Draw the image on canvas
   ctx.drawImage(img, padding, padding);
 
+  assertCanvasIsReadable(ctx);
+
   return {
     img,
     canvas,
@@ -36,6 +49,20 @@ function buildImageCanvas(img: HTMLImageElement, options?: CreateStickerOptions)
     padding: padding,
     options: { ...defaultOptions, ...options, padding }
   };
+}
+
+// A cross-origin image loaded without CORS taints the canvas and its pixels cannot be read
+function assertCanvasIsReadable(ctx: CanvasRenderingContext2D): void {
+  try {
+    ctx.getImageData(0, 0, 1, 1);
+  } catch (error) {
+    throw new Error(
+      "Cannot read the image pixels because it is a cross-origin image without CORS access. " +
+      "The image server must send an Access-Control-Allow-Origin header (and the crossOrigin option must not be null), " +
+      "or the image must be served from the same origin.",
+      { cause: error }
+    );
+  }
 }
 
 function getPadding(options?: CreateStickerOptions): number {
@@ -51,5 +78,6 @@ const defaultOptions: CreateStickerOptions = {
   strokeWidth: 20,
   padding: 1,
   fillHoles: true,
-  alphaThreshold: 0
+  alphaThreshold: 0,
+  crossOrigin: "anonymous"
 }

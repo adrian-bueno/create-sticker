@@ -13,6 +13,7 @@ These changes are breaking (the API or default output would change), so they are
 
 ### Added
 - `alphaThreshold` option: ignore nearly transparent pixels when finding outlines. The default `0` keeps the current behavior.
+- `crossOrigin` option (default `"anonymous"`): remote images are requested with CORS, so images from servers that allow CORS now work instead of failing with a tainted canvas `SecurityError`. If the pixels still cannot be read, the error explains why.
 
 ### Changed
 - Faster sticker generation (one pixel read, a single output canvas). The output is pixel-identical: about 2.5x faster on large images and over 10x faster on images with many separate shapes.

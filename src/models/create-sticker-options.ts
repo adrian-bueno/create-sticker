@@ -17,4 +17,9 @@ export interface CreateStickerOptions {
    * get their own sticker outline. They are still drawn in the result. Default: 0
    */
   alphaThreshold?: number;
+  /**
+   * CORS mode used to load the image. Remote images need CORS access so their
+   * pixels can be read. Use null to not set it. Default: "anonymous"
+   */
+  crossOrigin?: "anonymous" | "use-credentials" | null;
 }
