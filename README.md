@@ -19,7 +19,7 @@ It uses HTML Canvas, so it only works in the browser (and not in Node.js).
 ### Browser
 
 ```html
-<script src="https://unpkg.com/@devadri/create-sticker@{{ version }}/bundle.iife.js"></script>
+<script src="https://unpkg.com/@devadri/create-sticker@1/bundle.iife.js"></script>
 ```
 
 ### npm
@@ -33,7 +33,7 @@ npm install @devadri/create-sticker
 ### Browser
 
 ```html
-<script src="https://unpkg.com/@devadri/create-sticker@1.1.0/dist/bundle.iife.js"></script>
+<script src="https://unpkg.com/@devadri/create-sticker@1/bundle.iife.js"></script>
 <script>
   async function modifyImage(img) {
     const options = {
