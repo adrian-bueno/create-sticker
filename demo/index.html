@@ -20,40 +20,136 @@
     }
 
     body {
-      width: 100dvw;
-      max-height: 100dvh;
       font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+      font-size: 14px;
       display: flex;
       background: #ddd;
-      /* background: #fff; */
       color: black;
     }
 
-    .source-wrapper,
-    .result-wrapper {
+    /* CONTROLS */
+
+    .controls {
+      width: 280px;
+      flex-shrink: 0;
+      height: 100%;
+      overflow-y: auto;
+      padding: 16px;
+      border-right: 1px solid rgba(0,0,0,0.2);
+      background: #eee;
+      display: flex;
+      flex-flow: column;
+      gap: 14px;
+    }
+
+    .controls h1 {
+      font-size: 18px;
+    }
+
+    .controls fieldset {
+      border: none;
+      display: flex;
+      flex-flow: column;
+      gap: 8px;
+    }
+
+    .controls legend {
+      font-weight: 600;
+      margin-bottom: 6px;
+    }
+
+    .field {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+    }
+
+    .field input[type="number"] {
+      width: 70px;
+    }
+
+    .field input[type="range"] {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .field input:disabled {
+      opacity: 0.4;
+    }
+
+    .drop-zone {
+      border: 2px dashed rgba(0,0,0,0.3);
+      border-radius: 6px;
+      padding: 12px;
+      text-align: center;
+      cursor: pointer;
+    }
+
+    .drop-zone.dragging {
+      background: #fff;
+      border-color: #36c;
+    }
+
+    .actions {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .button {
+      display: inline-block;
+      padding: 6px 14px;
+      border-radius: 4px;
+      background: #36c;
+      color: white;
+      text-decoration: none;
+    }
+
+    .button[hidden] {
+      display: none;
+    }
+
+    .status {
+      color: #555;
+      min-height: 1.2em;
+    }
+
+    .status.error {
+      color: #b00;
+    }
+
+    /* IMAGES */
+
+    .panels {
+      flex: 1;
+      display: flex;
+      min-width: 0;
+    }
+
+    .panel {
       width: 50%;
       height: 100%;
       display: flex;
       flex-flow: column;
     }
 
-    .source-wrapper {
-      border-right: 1px solid rgba(0,0,0,0.2);
+    .panel + .panel {
+      border-left: 1px solid rgba(0,0,0,0.2);
     }
 
-    .wrapper-header {
-      width: 100%;
+    .panel-header {
       height: 50px;
       border-bottom: 1px solid rgba(0,0,0,0.2);
       display: flex;
-      justify-content: space-between;
       align-items: center;
+      justify-content: space-between;
       padding: 0 20px;
     }
 
-    .wrapper-content {
-      width: 100%;
+    .panel-content {
       flex: 1;
+      min-height: 0;
       display: flex;
       justify-content: center;
       align-items: center;
@@ -61,87 +157,351 @@
     }
 
     .img-wrapper {
-      flex: 1;
-      border: 1px solid rgba(0,0,0,0.2);
       width: 100%;
       height: 100%;
+      border: 1px solid rgba(0,0,0,0.2);
       display: flex;
       justify-content: center;
       align-items: center;
     }
 
+    body.checkerboard .img-wrapper {
+      background: repeating-conic-gradient(#ccc 0% 25%, #fff 0% 50%) 50% / 20px 20px;
+    }
+
     img {
       max-width: 100%;
       max-height: 100%;
-      border: none;
-      object-fit: cover;
+      object-fit: contain;
     }
 
+    img:not([src]) {
+      visibility: hidden;
+    }
+
+    @media (max-width: 800px) {
+      body {
+        flex-flow: column;
+        height: auto;
+      }
+
+      .controls {
+        width: 100%;
+        height: auto;
+        border-right: none;
+        border-bottom: 1px solid rgba(0,0,0,0.2);
+      }
+
+      .panels {
+        flex-flow: column;
+      }
+
+      .panel {
+        width: 100%;
+        height: 60vh;
+      }
+
+      .panel + .panel {
+        border-left: none;
+        border-top: 1px solid rgba(0,0,0,0.2);
+      }
+    }
   </style>
 </head>
 
-<body>
+<body class="checkerboard">
 
-  <!-- ORIGIN -->
-  <div class="source-wrapper">
+  <form class="controls" id="controls">
+    <h1>Create Sticker</h1>
 
-    <div class="wrapper-header">
-      <h1>SOURCE</h1>
-      <input id="image-input" type="file" accept="image/*" capture="environment">
-    </div>
-
-    <div class="wrapper-content">
-      <div class="img-wrapper">
-        <img id="source-image" src="" alt="">
+    <fieldset>
+      <legend>Image</legend>
+      <label class="drop-zone" id="drop-zone">
+        Drop an image here or click to choose one
+        <input id="image-input" type="file" accept="image/*" hidden>
+      </label>
+      <div class="field">
+        <label for="sample">Sample</label>
+        <select id="sample">
+          <option value="">-</option>
+          <option value="images/react.png">react.png</option>
+          <option value="images/openmoji-happy-cat.png">openmoji-happy-cat.png</option>
+          <option value="images/hand.png">hand.png</option>
+          <option value="images/angular.webp">angular.webp</option>
+          <option value="images/angular-with-holes.png">angular-with-holes.png</option>
+          <option value="images/square.jpg">square.jpg</option>
+          <option value="images/square-2.png">square-2.png</option>
+        </select>
       </div>
-    </div>
+    </fieldset>
 
-  </div>
-
-  <!-- RESULT -->
-  <div class="result-wrapper">
-
-    <div class="wrapper-header">
-      <h1>RESULT</h1>
-    </div>
-
-    <div class="wrapper-content">
-      <div class="img-wrapper">
-        <img id="result-image" src="" alt="">
+    <fieldset>
+      <legend>Stroke</legend>
+      <div class="field">
+        <label for="strokeWidth">Width</label>
+        <input id="strokeWidth" type="range" min="0" max="100" value="20">
+        <input id="strokeWidthNumber" type="number" min="0" value="20">
       </div>
-    </div>
+      <div class="field">
+        <label for="strokeColor">Color</label>
+        <input id="strokeColor" type="color" value="#ffffff">
+      </div>
+      <div class="field">
+        <label for="fillHoles">Fill holes</label>
+        <input id="fillHoles" type="checkbox" checked>
+      </div>
+      <div class="field">
+        <label for="strokeHoles">Stroke holes</label>
+        <input id="strokeHoles" type="checkbox" disabled>
+      </div>
+    </fieldset>
 
-  </div>
+    <fieldset>
+      <legend>Outline</legend>
+      <div class="field">
+        <label for="outline">Enabled</label>
+        <input id="outline" type="checkbox">
+      </div>
+      <div class="field">
+        <label for="outlineWidth">Width</label>
+        <input id="outlineWidth" type="number" min="1" value="3" disabled>
+      </div>
+      <div class="field">
+        <label for="outlineColor">Color</label>
+        <input id="outlineColor" type="color" value="#999999" disabled>
+      </div>
+    </fieldset>
+
+    <fieldset>
+      <legend>Effects</legend>
+      <div class="field">
+        <label for="shadow">Shadow</label>
+        <input id="shadow" type="checkbox">
+      </div>
+      <div class="field">
+        <label for="trim">Trim</label>
+        <input id="trim" type="checkbox">
+      </div>
+    </fieldset>
+
+    <fieldset>
+      <legend>Image processing</legend>
+      <div class="field">
+        <label for="autoPadding">Auto padding</label>
+        <input id="autoPadding" type="checkbox" checked>
+      </div>
+      <div class="field">
+        <label for="padding">Padding</label>
+        <input id="padding" type="number" min="1" value="20" disabled>
+      </div>
+      <div class="field">
+        <label for="alphaThreshold">Alpha threshold</label>
+        <input id="alphaThreshold" type="number" min="0" max="254" value="0">
+      </div>
+      <div class="field">
+        <label for="maxSize">Max size (0 = none)</label>
+        <input id="maxSize" type="number" min="0" value="0">
+      </div>
+    </fieldset>
+
+    <fieldset>
+      <legend>Output</legend>
+      <div class="field">
+        <label for="outputType">Format</label>
+        <select id="outputType">
+          <option value="image/png">PNG</option>
+          <option value="image/webp">WebP</option>
+        </select>
+      </div>
+      <div class="field">
+        <label for="checkerboard">Checkerboard</label>
+        <input id="checkerboard" type="checkbox" checked>
+      </div>
+    </fieldset>
+
+    <div class="actions">
+      <a id="download" class="button" download="sticker.png" hidden>Download</a>
+    </div>
+    <p class="status" id="status"></p>
+  </form>
+
+  <main class="panels">
+    <section class="panel">
+      <div class="panel-header">
+        <h2>SOURCE</h2>
+      </div>
+      <div class="panel-content">
+        <div class="img-wrapper">
+          <img id="source-image" alt="Source image">
+        </div>
+      </div>
+    </section>
+
+    <section class="panel">
+      <div class="panel-header">
+        <h2>RESULT</h2>
+      </div>
+      <div class="panel-content">
+        <div class="img-wrapper">
+          <img id="result-image" alt="Sticker result">
+        </div>
+      </div>
+    </section>
+  </main>
 
   <!-- SCRIPTS -->
-  <script src="/dist/bundle.iife.js"></script>
-  <!-- <script src="https://unpkg.com/@devadri/create-sticker@1.0.0/bundle.iife.js"></script> -->
+  <script src="../dist/bundle.iife.js"></script>
+  <!-- <script src="https://unpkg.com/@devadri/create-sticker@1/bundle.iife.js"></script> -->
   <script>
 
-    const imageInput = document.getElementById("image-input");
-    const sourceImage = document.getElementById("source-image");
-    const resultImage = document.getElementById("result-image");
+    const $ = id => document.getElementById(id);
 
-    imageInput.addEventListener("change", function(event) {
-      if (!event || !event.target?.files?.length) {
-        console.warn("NULL event or no files", event);
-        return;
-      }
+    const sourceImage = $("source-image");
+    const resultImage = $("result-image");
+    const download = $("download");
+    const status = $("status");
 
-      const file = event.target.files[0];
+    // Current source (File or sample URL) and object URLs to release
+    let source = null;
+    let sourceURL = null;
+    let resultURL = null;
+    let renderId = 0;
 
-      const reader = new FileReader();
+    function setSource(newSource) {
+      source = newSource;
+      if (sourceURL)
+        URL.revokeObjectURL(sourceURL);
+      sourceURL = newSource instanceof Blob ? URL.createObjectURL(newSource) : null;
+      sourceImage.src = sourceURL || newSource;
+      render();
+    }
 
-      reader.onload = function(e) {
-        const src = e.target.result;
-        sourceImage.src = src;
-
-        CreateSticker.createSticker(src, { strokeWidth: 20, strokeColor: "blue", padding: 20, fillHoles: true })
-          .then(stickerSrc => resultImage.src = stickerSrc);
+    function readOptions() {
+      const outline = $("outline").checked;
+      const maxSize = Number($("maxSize").value);
+      return {
+        strokeWidth: Number($("strokeWidth").value),
+        strokeColor: $("strokeColor").value,
+        fillHoles: $("fillHoles").checked,
+        strokeHoles: $("strokeHoles").checked,
+        outlines: outline ? [{ width: Number($("outlineWidth").value), color: $("outlineColor").value }] : [],
+        shadow: $("shadow").checked,
+        trim: $("trim").checked,
+        padding: $("autoPadding").checked ? undefined : Number($("padding").value),
+        alphaThreshold: Number($("alphaThreshold").value),
+        maxSize: maxSize > 0 ? maxSize : undefined,
+        outputType: $("outputType").value,
       };
+    }
 
-      reader.readAsDataURL(file);
+    async function render() {
+      if (!source)
+        return;
+
+      const id = ++renderId;
+      const options = readOptions();
+      status.textContent = "Processing...";
+      status.classList.remove("error");
+
+      try {
+        const start = performance.now();
+        const blob = await CreateSticker.createStickerBlob(source, options);
+        const time = Math.round(performance.now() - start);
+
+        // Ignore results of renders that were superseded
+        if (id !== renderId)
+          return;
+
+        if (resultURL)
+          URL.revokeObjectURL(resultURL);
+        resultURL = URL.createObjectURL(blob);
+        resultImage.src = resultURL;
+
+        download.href = resultURL;
+        download.download = "sticker." + (blob.type === "image/webp" ? "webp" : "png");
+        download.hidden = false;
+
+        await resultImage.decode().catch(() => {});
+        status.textContent = `${resultImage.naturalWidth}x${resultImage.naturalHeight} · ${time} ms · ${Math.round(blob.size / 1024)} KB`;
+      } catch (error) {
+        if (id !== renderId)
+          return;
+        console.error(error);
+        status.textContent = error.message;
+        status.classList.add("error");
+      }
+    }
+
+    // Re-render (debounced) when any option changes
+    let renderTimeout;
+    function scheduleRender() {
+      clearTimeout(renderTimeout);
+      renderTimeout = setTimeout(render, 100);
+    }
+
+    function syncControls() {
+      $("strokeHoles").disabled = $("fillHoles").checked;
+      $("outlineWidth").disabled = !$("outline").checked;
+      $("outlineColor").disabled = !$("outline").checked;
+      $("padding").disabled = $("autoPadding").checked;
+      document.body.classList.toggle("checkerboard", $("checkerboard").checked);
+    }
+
+    $("controls").addEventListener("input", event => {
+      if (event.target.id === "strokeWidth")
+        $("strokeWidthNumber").value = event.target.value;
+      if (event.target.id === "strokeWidthNumber")
+        $("strokeWidth").value = event.target.value;
+      if (["image-input", "sample", "checkerboard"].includes(event.target.id))
+        return;
+      syncControls();
+      scheduleRender();
     });
+
+    $("checkerboard").addEventListener("change", syncControls);
+
+    $("controls").addEventListener("submit", event => event.preventDefault());
+
+    // Image selection: file input, drag & drop and samples
+
+    $("image-input").addEventListener("change", event => {
+      const file = event.target.files?.[0];
+      if (file) {
+        $("sample").value = "";
+        setSource(file);
+      }
+    });
+
+    $("sample").addEventListener("change", event => {
+      if (event.target.value)
+        setSource(event.target.value);
+    });
+
+    const dropZone = $("drop-zone");
+
+    document.addEventListener("dragover", event => {
+      event.preventDefault();
+      dropZone.classList.add("dragging");
+    });
+
+    document.addEventListener("dragleave", event => {
+      if (!event.relatedTarget)
+        dropZone.classList.remove("dragging");
+    });
+
+    document.addEventListener("drop", event => {
+      event.preventDefault();
+      dropZone.classList.remove("dragging");
+      const file = [...event.dataTransfer.files].find(f => f.type.startsWith("image/"));
+      if (file) {
+        $("sample").value = "";
+        setSource(file);
+      }
+    });
+
+    syncControls();
+    $("sample").value = "images/react.png";
+    setSource("images/react.png");
 
   </script>
 </body>
