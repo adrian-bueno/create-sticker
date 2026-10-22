@@ -71,12 +71,14 @@ async function modifyImage(img) {
 {
   "strokeWidth": 20,
   "strokeColor": "white",
-  "padding": 1,
   "fillHoles": true
 }
 ```
 
-`padding` minimum values is `1`.
+`padding` is the transparent space added around the image, so the stroke is not clipped at the edges. The output image is `padding * 2` pixels wider and taller than the input.
+
+- When `padding` is not set (or is less than `1`), it defaults to half the stroke width (`Math.ceil(strokeWidth / 2)`, minimum `1`).
+- When `padding` is set to `1` or more, that value is used as is. A value smaller than `strokeWidth / 2` can clip the stroke at the image edges.
 
 
 ## Demo
