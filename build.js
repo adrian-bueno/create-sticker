@@ -43,6 +43,7 @@ async function build() {
 
   delete packageJson.scripts;
   delete packageJson.devDependencies;
+  delete packageJson.private;
 
   fs.writeFileSync("./dist/package.json", JSON.stringify(packageJson, null, 2), "utf8");
 
