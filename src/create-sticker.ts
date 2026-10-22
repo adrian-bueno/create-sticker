@@ -5,7 +5,26 @@ import { loadImage } from "./load-image";
 import { CreateStickerOptions, DiscreteElement, ImageCanvas, StickerImageSource } from "./models";
 
 
+/** Create a sticker and return it as a data URL (PNG by default, see `outputType`) */
 export async function createSticker(image: StickerImageSource, options?: CreateStickerOptions): Promise<string> {
+  const canvas = await createStickerCanvas(image, options);
+  return canvas.toDataURL(options?.outputType ?? 'image/png', options?.outputQuality ?? 1);
+}
+
+/** Create a sticker and return it as a Blob (PNG by default, see `outputType`) */
+export async function createStickerBlob(image: StickerImageSource, options?: CreateStickerOptions): Promise<Blob> {
+  const canvas = await createStickerCanvas(image, options);
+  return new Promise((resolve, reject) => {
+    canvas.toBlob(
+      blob => blob ? resolve(blob) : reject(new Error("Error encoding sticker image")),
+      options?.outputType ?? 'image/png',
+      options?.outputQuality ?? 1
+    );
+  });
+}
+
+/** Create a sticker and return it as a canvas */
+export async function createStickerCanvas(image: StickerImageSource, options?: CreateStickerOptions): Promise<HTMLCanvasElement> {
   const imageCanvas = await loadImage(image, options);
 
   const stickerCanvas = document.createElement('canvas');
@@ -26,8 +45,7 @@ export async function createSticker(image: StickerImageSource, options?: CreateS
   const p = imageCanvas.padding;
   stickerCanvasCtx.drawImage(imageCanvas.image, p, p);
 
-  // Get the data URL of the resized image
-  return stickerCanvas.toDataURL('image/png', 1); // 1 is the quality from 0 to 1
+  return stickerCanvas;
 }
 
 // Draw just the pixels of a discrete element

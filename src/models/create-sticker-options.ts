@@ -22,4 +22,11 @@ export interface CreateStickerOptions {
    * pixels can be read. Use null to not set it. Default: "anonymous"
    */
   crossOrigin?: "anonymous" | "use-credentials" | null;
+  /**
+   * Image format of the result of createSticker and createStickerBlob, e.g. "image/webp".
+   * Formats the browser cannot encode fall back to PNG. Default: "image/png"
+   */
+  outputType?: string;
+  /** Quality from 0 to 1 for lossy output formats (image/jpeg, image/webp). Default: 1 */
+  outputQuality?: number;
 }

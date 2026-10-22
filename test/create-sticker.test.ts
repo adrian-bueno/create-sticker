@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { createSticker, CreateStickerOptions } from '../src';
+import { createSticker, createStickerBlob, createStickerCanvas, CreateStickerOptions } from '../src';
 import { blankImageDataURL, decodeImage, drawTestImage, maxPixelDifference, summarizePixels } from './helpers';
 
 import angularWithHoles from '../demo/images/angular-with-holes.png?url';
@@ -198,5 +198,33 @@ describe('input types', () => {
 
   it('rejects an HTMLImageElement without src', async () => {
     await expect(createSticker(new Image())).rejects.toThrow('Error loading image');
+  });
+});
+
+describe('output types', () => {
+  it('createStickerCanvas returns a canvas with the same pixels', async () => {
+    const canvas = await createStickerCanvas(react);
+    expect(canvas).toBeInstanceOf(HTMLCanvasElement);
+    expect(await summarizePixels(canvas.toDataURL())).toEqual(await summarizePixels(await createSticker(react)));
+  });
+
+  it('createStickerBlob returns a PNG blob with the same pixels', async () => {
+    const blob = await createStickerBlob(react);
+    expect(blob.type).toBe('image/png');
+    const url = URL.createObjectURL(blob);
+    try {
+      expect(await summarizePixels(url)).toEqual(await summarizePixels(await createSticker(react)));
+    } finally {
+      URL.revokeObjectURL(url);
+    }
+  });
+
+  it('encodes other formats with outputType and outputQuality', async () => {
+    const webp = await createSticker(react, { outputType: 'image/webp', outputQuality: 0.8 });
+    expect(webp.startsWith('data:image/webp;base64,')).toBe(true);
+    const blob = await createStickerBlob(react, { outputType: 'image/webp', outputQuality: 0.8 });
+    expect(blob.type).toBe('image/webp');
+    const low = await createStickerBlob(react, { outputType: 'image/webp', outputQuality: 0.1 });
+    expect(low.size).toBeLessThan(blob.size);
   });
 });

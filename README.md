@@ -74,7 +74,15 @@ async function modifyImage(img) {
   - `Blob` / `File` (for example from an `<input type="file">`)
   - `HTMLImageElement`: loaded or still loading; its natural size is used
   - `HTMLCanvasElement`, `OffscreenCanvas` or `ImageBitmap`
-- Returns `Promise<string>`: a PNG data URL of the sticker image.
+- Returns `Promise<string>`: a data URL of the sticker image (PNG unless `outputType` is set).
+
+### `createStickerBlob(image, options?)`
+
+Same as `createSticker`, but returns a `Promise<Blob>`. Encoding a Blob is cheaper than a base64 data URL, which makes it better for uploads and downloads. To display it, use `URL.createObjectURL(blob)`.
+
+### `createStickerCanvas(image, options?)`
+
+Same as `createSticker`, but returns the `Promise<HTMLCanvasElement>` without encoding it. Use it to keep drawing on the result.
 
 ### Options
 
@@ -88,6 +96,8 @@ All options are optional.
 | `padding` | `number` | `Math.ceil(strokeWidth / 2)` | Transparent space added around the image, in pixels (see below). |
 | `alphaThreshold` | `number` | `0` | Pixels with alpha (0-255) at or below this value are ignored when finding outlines, so faint noise or antialiasing halos do not get their own outline. They are still drawn. Try `10`-`20` for photos or lossy images. |
 | `crossOrigin` | `"anonymous" \| "use-credentials" \| null` | `"anonymous"` | CORS mode used to load the image. Use `null` to not set it. |
+| `outputType` | `string` | `"image/png"` | Format of the `createSticker`/`createStickerBlob` result, for example `"image/webp"`. Formats the browser cannot encode fall back to PNG. |
+| `outputQuality` | `number` | `1` | Quality from 0 to 1 for lossy formats (`image/jpeg`, `image/webp`). |
 
 `padding` is the transparent space added around the image, so the stroke is not clipped at the edges. The output image is `padding * 2` pixels wider and taller than the input.
 
