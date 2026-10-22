@@ -14,6 +14,9 @@ These changes are breaking (the API or default output would change), so they are
 ### Added
 - `alphaThreshold` option: ignore nearly transparent pixels when finding outlines. The default `0` keeps the current behavior.
 
+### Changed
+- Faster sticker generation (one pixel read, a single output canvas). The output is pixel-identical: about 2.5x faster on large images and over 10x faster on images with many separate shapes.
+
 ## [1.2.1]
 
 ### Fixed
