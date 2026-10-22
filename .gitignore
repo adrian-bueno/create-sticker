@@ -5,3 +5,4 @@ src/**/*.js
 src/**/*.js.map
 
 .claude/settings.local.json
+.vitest
