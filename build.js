@@ -36,6 +36,20 @@ async function build() {
       minify: true,
       define: { "process.env.NODE_ENV": '"production"' },
     }),
+
+    // CommonJS bundle
+    esbuild.build({
+      entryPoints: ["src/index.ts"],
+      bundle: true,
+      outfile: "dist/bundle.cjs.js",
+      tsconfig: "./tsconfig.json",
+      format: "cjs",
+      target: ["es6"],
+      platform: "neutral",
+      sourcemap: true,
+      minify: true,
+      define: { "process.env.NODE_ENV": '"production"' },
+    }),
   ]);
 
   // Copy package.json removing unnecesary properties

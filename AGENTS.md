@@ -9,6 +9,7 @@ Guidance for AI coding agents working on this repository.
 - Browser-only: it relies on `HTMLCanvasElement`, `Image` and `CanvasRenderingContext2D`.
 - Zero runtime dependencies. Keep it that way.
 - Published from `dist/` (the build copies a trimmed `package.json`, `README.md` and `LICENSE.md` there), so `dist/` is the package root on npm/unpkg.
+- Entry points: `exports` selects `bundle.esm.mjs` (import) or `bundle.cjs.js` (require). `unpkg`/`jsdelivr` point at `bundle.iife.js` (global `CreateSticker`). The `./*` export keeps every file path importable. Do not remove it in 1.x.
 
 ## Pipeline
 
@@ -27,7 +28,7 @@ Other files:
 
 ```sh
 npm install
-npm run build      # tsc (declarations only) + esbuild IIFE and ESM bundles into dist/
+npm run build      # tsc (declarations only) + esbuild IIFE, ESM and CJS bundles into dist/
 npm run typecheck  # type-check src/ and test/
 npm test           # Vitest browser mode (Playwright Chromium)
 npm run test:update  # rewrite snapshots after an intended output change

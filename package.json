@@ -6,9 +6,22 @@
   "license": "Unlicense",
   "description": "Library that adds a sticker effect to images with transparent backgrounds",
   "homepage": "https://github.com/adrian-bueno/create-sticker",
-  "main": "bundle.iife.js",
+  "main": "bundle.cjs.js",
   "module": "bundle.esm.mjs",
+  "unpkg": "bundle.iife.js",
+  "jsdelivr": "bundle.iife.js",
   "types": "types/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./types/index.d.ts",
+      "import": "./bundle.esm.mjs",
+      "require": "./bundle.cjs.js",
+      "default": "./bundle.esm.mjs"
+    },
+    "./package.json": "./package.json",
+    "./*": "./*"
+  },
+  "sideEffects": false,
   "repository": {
     "type": "git",
     "url": "git+https://github.com/adrian-bueno/create-sticker.git"
