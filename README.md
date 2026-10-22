@@ -99,6 +99,7 @@ All options are optional.
 | `crossOrigin` | `"anonymous" \| "use-credentials" \| null` | `"anonymous"` | CORS mode used to load the image. Use `null` to not set it. |
 | `outlines` | `{ width, color }[]` | `[]` | Extra outlines around the stroke, from inner to outer, for example `[{ width: 3, color: "#999" }]` for a thin grey border. Each `width` is added outside the previous outline. Touching elements share the outlines. |
 | `shadow` | `boolean \| { color?, blur?, offsetX?, offsetY? }` | none | Drop shadow under the whole sticker. `true` uses `{ color: "rgba(0, 0, 0, 0.4)", blur: 8, offsetX: 0, offsetY: 4 }`. The image grows so the shadow is not clipped. |
+| `maxSize` | `number` | no limit | Scale the image down (keeping its aspect ratio) so neither side is larger than this, before adding the effect. Stroke width and padding are not scaled. Useful for large photos. |
 | `trim` | `boolean` | `false` | Crop the result to its visible content, removing transparent margins (extra `padding` or transparent borders in the source image). |
 | `outputType` | `string` | `"image/png"` | Format of the `createSticker`/`createStickerBlob` result, for example `"image/webp"`. Formats the browser cannot encode fall back to PNG. |
 | `outputQuality` | `number` | `1` | Quality from 0 to 1 for lossy formats (`image/jpeg`, `image/webp`). |

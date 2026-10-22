@@ -57,6 +57,13 @@ export interface CreateStickerOptions {
    */
   shadow?: boolean | StickerShadowOptions;
   /**
+   * Scale the image down (keeping its aspect ratio) so neither side is larger
+   * than this, before adding the sticker effect. Stroke width and padding are
+   * not scaled. Useful for large photos: faster and within browser canvas limits.
+   * Default: no limit
+   */
+  maxSize?: number;
+  /**
    * Crop the result to its visible content, removing any transparent margin
    * (extra padding or transparent borders in the source image). Default: false
    */

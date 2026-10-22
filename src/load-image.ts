@@ -9,7 +9,27 @@ interface DrawableImage {
 
 export async function loadImage(source: StickerImageSource, options?: CreateStickerOptions): Promise<ImageCanvas> {
   const image = await toDrawableImage(source, options);
-  return buildImageCanvas(image, options);
+  return buildImageCanvas(limitSize(image, options?.maxSize), options);
+}
+
+// Scale the image down (keeping its aspect ratio) so neither side exceeds maxSize
+function limitSize(image: DrawableImage, maxSize?: number): DrawableImage {
+  if (!maxSize || maxSize <= 0 || (image.width <= maxSize && image.height <= maxSize))
+    return image;
+
+  const scale = maxSize / Math.max(image.width, image.height);
+  const width = Math.max(1, Math.round(image.width * scale));
+  const height = Math.max(1, Math.round(image.height * scale));
+
+  const canvas = document.createElement('canvas');
+  canvas.width = width;
+  canvas.height = height;
+
+  const ctx = canvas.getContext('2d')!;
+  ctx.imageSmoothingQuality = "high";
+  ctx.drawImage(image.image, 0, 0, width, height);
+
+  return { image: canvas, width, height };
 }
 
 async function toDrawableImage(source: StickerImageSource, options?: CreateStickerOptions): Promise<DrawableImage> {

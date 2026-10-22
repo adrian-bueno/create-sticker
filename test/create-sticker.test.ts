@@ -407,3 +407,22 @@ describe('trim option', () => {
     expect(result.height).toBe(40);
   });
 });
+
+describe('maxSize option', () => {
+  it('scales large images down keeping the aspect ratio', async () => {
+    // hand.png is 396x528
+    const result = await decodeImage(await createSticker(hand, { strokeWidth: 10, maxSize: 264 }));
+    expect(result.width).toBe(198 + 10);
+    expect(result.height).toBe(264 + 10);
+  });
+
+  it('does not change images within the limit', async () => {
+    expect(await summarizePixels(await createSticker(hand, { maxSize: 528 })))
+      .toEqual(await summarizePixels(await createSticker(hand)));
+  });
+
+  it('is ignored when 0 or negative', async () => {
+    expect(await summarizePixels(await createSticker(hand, { maxSize: 0 })))
+      .toEqual(await summarizePixels(await createSticker(hand)));
+  });
+});
