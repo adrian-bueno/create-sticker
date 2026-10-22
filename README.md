@@ -9,9 +9,9 @@
 
 Tested with `.png`, `.webp` and `.jpg`.
 
-Customize: `stroke color`, `stroke thickness`, `fill holes` and `image padding`.
+Customize the stroke color and width, hole filling or stroking, extra outlines, a drop shadow, padding and trimming. See [Options](#options).
 
-It uses HTML Canvas, so it only works in the browser (and not in Node.js). It also works in Web Workers (with `OffscreenCanvas`), to keep large images off the main thread.
+It uses HTML Canvas, so it only works in the browser (not in Node.js). It also works in Web Workers (with `OffscreenCanvas`), to keep large images off the main thread.
 
 
 ## Install
@@ -126,6 +126,12 @@ self.onmessage = async (event) => {
 ### Remote images (CORS)
 
 The image pixels must be readable, so images from another origin must be served with CORS headers (`Access-Control-Allow-Origin`). Without them, `createSticker` rejects with an explanatory error. Images loaded from data URLs, blob URLs or the same origin always work.
+
+
+### Browser support
+
+- Main thread: any modern browser (Canvas 2D).
+- Web Workers: browsers with `OffscreenCanvas` 2D support (Chrome 69+, Firefox 105+, Safari 16.4+).
 
 
 ## Demo
