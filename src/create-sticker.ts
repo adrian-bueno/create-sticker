@@ -33,14 +33,16 @@ export async function createStickerCanvas(image: StickerImageSource, options?: C
   stickerCanvas.height = imageCanvas.height;
   const stickerCanvasCtx = stickerCanvas.getContext('2d')!;
 
+  const elems = findDiscreteElements(imageCanvas);
+
   // The sticker effect is applied individually to each discrete element.
   // The element is drawn below and above its sticker layer: below, so
   // semi-transparent pixels the layer does not cover keep the same look.
-  forEachDiscreteElement(imageCanvas, elem => {
+  for (const elem of elems) {
     drawDiscreteElement(stickerCanvasCtx, imageCanvas, elem);
     addStickerLayer(stickerCanvasCtx, elem.points, imageCanvas.options);
     drawDiscreteElement(stickerCanvasCtx, imageCanvas, elem);
-  });
+  }
 
   // Draw original image on top of stickerCanvas for a better result
   const p = imageCanvas.padding;
@@ -53,13 +55,15 @@ export async function createStickerCanvas(image: StickerImageSource, options?: C
   return stickerCanvas;
 }
 
-// Draw just the pixels of a discrete element
+// Draw just the pixels of a discrete element (from the source image,
+// as the image canvas has all elements removed)
 function drawDiscreteElement(ctx: CanvasRenderingContext2D, imageCanvas: ImageCanvas, elem: DiscreteElement): void {
   const { x, y, width, height } = elem.bounds;
+  const p = imageCanvas.padding;
   defineGeometryPath(ctx, elem.points);
   ctx.save();
   ctx.clip();
-  ctx.drawImage(imageCanvas.canvas, x, y, width, height, x, y, width, height);
+  ctx.drawImage(imageCanvas.image, x - p, y - p, width, height, x, y, width, height);
   ctx.restore();
 }
 
@@ -67,9 +71,10 @@ function drawDiscreteElement(ctx: CanvasRenderingContext2D, imageCanvas: ImageCa
 // (discrete elements == a group of pixels not touching
 // another groups of pixels
 // e.g. each individual sprite on a spritesheet is a discreet element)
-// and calls the callback with each one before removing it from the
-// image canvas
-function forEachDiscreteElement(imageCanvas: ImageCanvas, callback: (elem: DiscreteElement) => void): void {
+// and removes each one from the image canvas
+function findDiscreteElements(imageCanvas: ImageCanvas): DiscreteElement[] {
+  const elems: DiscreteElement[] = [];
+
   // Read the pixels once; only the area of each removed element is read again
   const data = imageCanvas.ctx.getImageData(0, 0, imageCanvas.width, imageCanvas.height).data;
 
@@ -83,11 +88,13 @@ function forEachDiscreteElement(imageCanvas: ImageCanvas, callback: (elem: Discr
     const points = d3GeometryContour(data, width, alphaThreshold, start);
     const elem = { points, bounds: boundingBox(points) };
 
-    callback(elem);
+    elems.push(elem);
     removeDiscreteElementFromCanvas(imageCanvas, data, elem);
 
     start = d3GeometryContourStart(data, width, height, alphaThreshold, start);
   }
+
+  return elems;
 }
 
 function removeDiscreteElementFromCanvas(imageCanvas: ImageCanvas, data: Uint8ClampedArray, elem: DiscreteElement): void {

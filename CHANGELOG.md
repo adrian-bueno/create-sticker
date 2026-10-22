@@ -23,7 +23,7 @@ These changes are breaking (the API or default output would change), so they are
 - `require("@devadri/create-sticker")` returned an empty object, because `main` pointed at the IIFE bundle. There is now a CommonJS bundle (`bundle.cjs.js`), and an `exports` map selects the ESM or CJS build. All existing file paths stay importable, and bare unpkg/jsdelivr URLs still serve the IIFE bundle.
 
 ### Changed
-- Faster sticker generation (one pixel read, a single output canvas). The output is pixel-identical: about 2.5x faster on large images and over 10x faster on images with many separate shapes.
+- Faster sticker generation (one pixel read, a single output canvas). The output is pixel-identical: about 3x faster on large images and over 100x faster on images with many separate shapes.
 - The package declares `"sideEffects": false` for better tree shaking.
 
 ## [1.2.1]
