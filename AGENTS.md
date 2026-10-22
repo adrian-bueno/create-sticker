@@ -15,9 +15,9 @@ Guidance for AI coding agents working on this repository.
 `createSticker(src, options)` in `src/create-sticker.ts`:
 
 1. `loadImage` (`src/load-image.ts`): loads the image into a canvas with transparent padding and merges the options with the defaults.
-2. `splitIntoDiscreteElements`: repeatedly finds a group of non-transparent pixels, then traces its outline with marching squares (`src/d3-geometry-contour.ts`, ported from d3-contour). It copies the group to its own canvas and erases it from the main canvas. The pixel data is read once; after each element is erased, only its bounding box is read again. The start-point scan resumes where it stopped, until no non-transparent pixel is left.
-3. `addStickerEffectToDiscreteElements` (`src/add-sticker-effect.ts`): strokes (and optionally fills) each element's contour path.
-4. Joins the element canvases, draws the original image on top and returns a PNG data URL.
+2. `forEachDiscreteElement` finds each group of non-transparent pixels ("discrete element") and traces its outline with marching squares (`src/d3-geometry-contour.ts`, ported from d3-contour). The pixel data is read once. The start-point scan resumes where it stopped, and after each element is erased from the image canvas, only its bounding box is read again.
+3. For each element, on a single output canvas: draw the element's pixels, then `addStickerLayer` (`src/add-sticker-effect.ts`) strokes and optionally fills the outline, then draw the element's pixels again.
+4. Draw the original image on top and return a PNG data URL.
 
 Other files:
 - `src/define-geometry-path.ts`: builds a canvas path from contour points.
