@@ -279,3 +279,44 @@ describe('shadow option', () => {
     expect(await summarizePixels(await createSticker(react, { shadow: true }))).toMatchSnapshot();
   });
 });
+
+describe('outlines option', () => {
+  const options: CreateStickerOptions = {
+    strokeWidth: 10,
+    strokeColor: '#ffffff',
+    outlines: [{ width: 3, color: '#0000ff' }, { width: 2, color: '#00ff00' }],
+  };
+
+  async function pixelAt(src: string, x: number, y: number): Promise<number[]> {
+    const img = await decodeImage(src);
+    const data = await readPixels(src);
+    const i = (y * img.width + x) * 4;
+    return [...data.slice(i, i + 4)];
+  }
+
+  it('does not change the output when empty', async () => {
+    expect(await summarizePixels(await createSticker(react, { outlines: [] })))
+      .toEqual(await summarizePixels(await createSticker(react)));
+  });
+
+  it('grows the default padding to fit the outlines', async () => {
+    // (10 + 2 * 3 + 2 * 2) / 2 = 10
+    const result = await decodeImage(await createSticker(drawTestImage(60, 60, [[10, 10, 40]]), options));
+    expect(result.width).toBe(80);
+  });
+
+  it('draws each outline outside the previous one', async () => {
+    // Square edge at x = 10 + padding 10 = 20. Stroke: 15-25, first outline: 12-15, second: 10-12
+    const result = await createSticker(drawTestImage(60, 60, [[10, 10, 40]]), options);
+    expect(await pixelAt(result, 17, 40)).toEqual([255, 255, 255, 255]);
+    expect(await pixelAt(result, 13, 40)).toEqual([0, 0, 255, 255]);
+    expect(await pixelAt(result, 11, 40)).toEqual([0, 255, 0, 255]);
+    expect((await pixelAt(result, 9, 40))[3]).toBe(0);
+  });
+
+  it('shares outlines between touching elements', async () => {
+    // Two squares with a 4px gap: the gap is covered by the main stroke, not by an outline
+    const result = await createSticker(drawTestImage(80, 60, [[10, 10, 15], [29, 10, 15]]), options);
+    expect(await pixelAt(result, 10 + 27, 10 + 17)).toEqual([255, 255, 255, 255]);
+  });
+});

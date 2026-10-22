@@ -93,9 +93,10 @@ All options are optional.
 | `strokeWidth` | `number` | `20` | Width of the outline, in pixels. |
 | `strokeColor` | `string` | `"white"` | Any CSS color. |
 | `fillHoles` | `boolean` | `true` | Fill transparent holes inside an object with `strokeColor`. |
-| `padding` | `number` | `Math.ceil(strokeWidth / 2)` | Transparent space added around the image, in pixels (see below). |
+| `padding` | `number` | half the stroke width (plus `outlines`) | Transparent space added around the image, in pixels (see below). |
 | `alphaThreshold` | `number` | `0` | Pixels with alpha (0-255) at or below this value are ignored when finding outlines, so faint noise or antialiasing halos do not get their own outline. They are still drawn. Try `10`-`20` for photos or lossy images. |
 | `crossOrigin` | `"anonymous" \| "use-credentials" \| null` | `"anonymous"` | CORS mode used to load the image. Use `null` to not set it. |
+| `outlines` | `{ width, color }[]` | `[]` | Extra outlines around the stroke, from inner to outer, for example `[{ width: 3, color: "#999" }]` for a thin grey border. Each `width` is added outside the previous outline. Touching elements share the outlines. |
 | `shadow` | `boolean \| { color?, blur?, offsetX?, offsetY? }` | none | Drop shadow under the whole sticker. `true` uses `{ color: "rgba(0, 0, 0, 0.4)", blur: 8, offsetX: 0, offsetY: 4 }`. The image grows so the shadow is not clipped. |
 | `outputType` | `string` | `"image/png"` | Format of the `createSticker`/`createStickerBlob` result, for example `"image/webp"`. Formats the browser cannot encode fall back to PNG. |
 | `outputQuality` | `number` | `1` | Quality from 0 to 1 for lossy formats (`image/jpeg`, `image/webp`). |

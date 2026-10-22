@@ -1,3 +1,4 @@
+import { totalStrokeWidth } from "./add-sticker-effect";
 import { CreateStickerOptions, ImageCanvas, StickerImageSource } from "./models";
 
 interface DrawableImage {
@@ -112,7 +113,7 @@ function getPadding(options?: CreateStickerOptions): number {
   if (options?.padding != null && options.padding >= 1)
     return options.padding;
 
-  const strokeWidth = options?.strokeWidth ?? defaultOptions.strokeWidth!;
+  const strokeWidth = totalStrokeWidth(options?.strokeWidth ?? defaultOptions.strokeWidth!, options?.outlines);
   return Math.max(1, Math.ceil(strokeWidth / 2));
 }
 

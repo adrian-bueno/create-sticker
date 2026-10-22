@@ -17,7 +17,7 @@ Guidance for AI coding agents working on this repository.
 
 1. `loadImage` (`src/load-image.ts`): resolves the input (URL, Blob, image, canvas or bitmap) and draws it into a canvas with transparent padding and merges the options with the defaults.
 2. `findDiscreteElements` finds each group of non-transparent pixels ("discrete element") and traces its outline with marching squares (`src/d3-geometry-contour.ts`, ported from d3-contour). It erases each element from the image canvas before looking for the next one. The pixel data is read once, the start-point scan resumes where it stopped, and only each element's bounding box is read again.
-3. For each element, on a single output canvas: draw the element's pixels (from the source image, clipped to the outline), then `addStickerLayer` (`src/add-sticker-effect.ts`) strokes and optionally fills the outline, then draw the element's pixels again.
+3. Draw the extra `outlines` (outermost first, for all elements). Then, for each element, on a single output canvas: draw the element's pixels (from the source image, clipped to the outline), then `addStickerLayer` (`src/add-sticker-effect.ts`) strokes and optionally fills the outline, then draw the element's pixels again.
 4. Draw the original image on top. `createStickerCanvas` returns this canvas; `createSticker` and `createStickerBlob` encode it.
 
 Other files:

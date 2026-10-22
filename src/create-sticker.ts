@@ -1,5 +1,5 @@
 import { addShadow } from "./add-shadow";
-import { addStickerLayer } from "./add-sticker-effect";
+import { addOutlineLayer, addStickerLayer, totalStrokeWidth } from "./add-sticker-effect";
 import { d3GeometryContour, d3GeometryContourStart } from "./d3-geometry-contour";
 import { defineGeometryPath } from "./define-geometry-path";
 import { loadImage } from "./load-image";
@@ -34,6 +34,16 @@ export async function createStickerCanvas(image: StickerImageSource, options?: C
   const stickerCanvasCtx = stickerCanvas.getContext('2d')!;
 
   const elems = findDiscreteElements(imageCanvas);
+
+  // Draw the extra outlines first, outermost first and for all elements at
+  // once, so touching elements share them like a single sticker
+  const { strokeWidth, outlines = [] } = imageCanvas.options;
+  for (let i = outlines.length - 1; i >= 0; i--) {
+    const width = totalStrokeWidth(strokeWidth!, outlines.slice(0, i + 1));
+    for (const elem of elems) {
+      addOutlineLayer(stickerCanvasCtx, elem.points, width, outlines[i].color);
+    }
+  }
 
   // The sticker effect is applied individually to each discrete element.
   // The element is drawn below and above its sticker layer: below, so

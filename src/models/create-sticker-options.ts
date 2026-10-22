@@ -9,6 +9,13 @@ export interface StickerShadowOptions {
   offsetY?: number;
 }
 
+export interface StickerOutline {
+  /** Width (in px) the outline adds outside the previous one */
+  width: number;
+  /** Any CSS color */
+  color: string;
+}
+
 export interface CreateStickerOptions {
   /** Default: 20 */
   strokeWidth?: number;
@@ -33,6 +40,12 @@ export interface CreateStickerOptions {
    * pixels can be read. Use null to not set it. Default: "anonymous"
    */
   crossOrigin?: "anonymous" | "use-credentials" | null;
+  /**
+   * Extra outlines drawn around the stroke, from inner to outer,
+   * e.g. a thin grey border around a white stroke: [{ width: 2, color: "#999" }].
+   * Default padding grows to fit them. Default: none
+   */
+  outlines?: StickerOutline[];
   /**
    * Drop shadow under the whole sticker. `true` uses the default shadow.
    * The image grows as needed so the shadow is not clipped. Default: no shadow
