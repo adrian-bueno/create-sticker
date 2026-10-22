@@ -6,7 +6,7 @@
 // https://github.com/d3/d3-contour/blob/v0.0.1/src/contour.js
 
 
-import { ImageCanvas, Point2D } from "./models";
+import { Point2D } from "./models";
 
 // lookup tables for marching directions
 const d3GeometryContourDx = [1, 0, 1, 1, -1, 0, -1, 1, 0, 0, 0, 0, -1, 0, -1, NaN],
@@ -17,34 +17,30 @@ function defineNonTransparent(data: Uint8ClampedArray, canvasWidth: number, x: n
   return (data[(y * canvasWidth + x) * 4 + 3] > 0);
 }
 
-function d3GeometryContourStart(data: Uint8ClampedArray, canvasWidth: number): number[] {
-  let x = 0,
-      y = 0;
+// Search for a starting point: begin at the origin and proceed along
+// outward-expanding diagonals, resuming from the previous starting point
+// (pixels before it were already checked and can only have been cleared).
+export function d3GeometryContourStart(data: Uint8ClampedArray, canvasWidth: number, canvasHeight: number, from: Point2D = [0, 0]): Point2D | null {
+  const maxDiagonal = canvasWidth + canvasHeight - 2;
+  let d = from[0] + from[1];
+  let x = from[0];
 
-  // search for a starting point; begin at origin
-  // and proceed along outward-expanding diagonals
-  while (true) {
-    if (defineNonTransparent(data, canvasWidth, x, y)) {
-      return [x, y];
+  while (d <= maxDiagonal) {
+    const minX = Math.max(0, d - canvasHeight + 1);
+    for (; x >= minX; x--) {
+      if (defineNonTransparent(data, canvasWidth, x, d - x)) {
+        return [x, d - x];
+      }
     }
-    if (x === 0) {
-      x = y + 1;
-      y = 0;
-    } else {
-      x = x - 1;
-      y = y + 1;
-    }
+    d++;
+    x = Math.min(d, canvasWidth - 1);
   }
+
+  return null;
 }
 
 // Edge detection
-export function d3GeometryContour(imageCanvas: ImageCanvas): Point2D[] {
-  const ctx = imageCanvas.ctx;
-  const imageData = ctx.getImageData(0, 0, imageCanvas.width, imageCanvas.height);
-  const data = imageData.data;
-  const canvasWidth = imageCanvas.width;
-
-  const s = d3GeometryContourStart(data, canvasWidth); // starting point
+export function d3GeometryContour(data: Uint8ClampedArray, canvasWidth: number, s: Point2D): Point2D[] {
   const c: Point2D[] = []; // contour polygon
 
   let x = s[0], // current x position

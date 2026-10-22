@@ -15,7 +15,7 @@ Guidance for AI coding agents working on this repository.
 `createSticker(src, options)` in `src/create-sticker.ts`:
 
 1. `loadImage` (`src/load-image.ts`): loads the image into a canvas with transparent padding and merges the options with the defaults.
-2. `splitIntoDiscreteElements`: repeatedly finds a group of non-transparent pixels, then traces its outline with marching squares (`src/d3-geometry-contour.ts`, ported from d3-contour). It copies the group to its own canvas and erases it from the main canvas, until `imageCanvasIsEmpty` returns true.
+2. `splitIntoDiscreteElements`: repeatedly finds a group of non-transparent pixels, then traces its outline with marching squares (`src/d3-geometry-contour.ts`, ported from d3-contour). It copies the group to its own canvas and erases it from the main canvas. The pixel data is read once; after each element is erased, only its bounding box is read again. The start-point scan resumes where it stopped, until no non-transparent pixel is left.
 3. `addStickerEffectToDiscreteElements` (`src/add-sticker-effect.ts`): strokes (and optionally fills) each element's contour path.
 4. Joins the element canvases, draws the original image on top and returns a PNG data URL.
 

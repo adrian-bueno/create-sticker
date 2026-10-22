@@ -1,9 +1,8 @@
 import { addStickerEffectToDiscreteElements } from "./add-sticker-effect";
-import { d3GeometryContour } from "./d3-geometry-contour";
+import { d3GeometryContour, d3GeometryContourStart } from "./d3-geometry-contour";
 import { defineGeometryPath } from "./define-geometry-path";
-import { imageCanvasIsEmpty } from "./image-canvas-is-empty";
 import { loadImage } from "./load-image";
-import { CreateStickerOptions, DiscreteElement, ImageCanvas } from "./models";
+import { CreateStickerOptions, DiscreteElement, ImageCanvas, Point2D } from "./models";
 
 
 export async function createSticker(imageSrc: string, options?: CreateStickerOptions): Promise<string> {
@@ -46,15 +45,14 @@ function joinDiscreteElementsInNewCanvas(elems: DiscreteElement[], imageCanvas: 
 function splitIntoDiscreteElements(imageCanvas: ImageCanvas): DiscreteElement[] {
   const elems: DiscreteElement[] = [];
 
-  let hasMoreElements = true;
+  // Read the pixels once; only the area of each removed element is read again
+  const data = imageCanvas.ctx.getImageData(0, 0, imageCanvas.width, imageCanvas.height).data;
 
-  while (hasMoreElements) {
-    const res = extractDiscreteElementFromCanvas(imageCanvas);
+  let start = d3GeometryContourStart(data, imageCanvas.width, imageCanvas.height);
 
-    if (res)
-      elems.push(res);
-
-    hasMoreElements = !!res;
+  while (start) {
+    elems.push(extractDiscreteElementFromCanvas(imageCanvas, data, start));
+    start = d3GeometryContourStart(data, imageCanvas.width, imageCanvas.height, start);
   }
 
   return elems;
@@ -64,24 +62,17 @@ function splitIntoDiscreteElements(imageCanvas: ImageCanvas): DiscreteElement[] 
 // (discrete elements == a group of pixels not touching
 // another groups of pixels
 // e.g. each individual sprite on a spritesheet is a discreet element
-function extractDiscreteElementFromCanvas(imageCanvas: ImageCanvas): DiscreteElement | null {
+function extractDiscreteElementFromCanvas(imageCanvas: ImageCanvas, data: Uint8ClampedArray, start: Point2D): DiscreteElement {
+  const elem = createDiscreteElement(imageCanvas, data, start);
 
-  const elem = findNextDiscreteElement(imageCanvas);
-
-  if (!elem)
-    return null;
-
-  removeDiscreteElementFromCanvas(imageCanvas, elem);
+  removeDiscreteElementFromCanvas(imageCanvas, data, elem);
 
   return elem;
 }
 
-function findNextDiscreteElement(imageCanvas: ImageCanvas): DiscreteElement | null {
-  if (imageCanvasIsEmpty(imageCanvas))
-    return null;
-
+function createDiscreteElement(imageCanvas: ImageCanvas, data: Uint8ClampedArray, start: Point2D): DiscreteElement {
   // get the point-path that outlines a discrete element
-  const points = d3GeometryContour(imageCanvas);
+  const points = d3GeometryContour(data, imageCanvas.width, start);
 
   // create a new canvas
   const newCanvas = document.createElement('canvas');
@@ -99,11 +90,31 @@ function findNextDiscreteElement(imageCanvas: ImageCanvas): DiscreteElement | nu
   return { canvas: newCanvas, points };
 }
 
-function removeDiscreteElementFromCanvas(imageCanvas: ImageCanvas, elem: DiscreteElement): void {
+function removeDiscreteElementFromCanvas(imageCanvas: ImageCanvas, data: Uint8ClampedArray, elem: DiscreteElement): void {
   const ctx = imageCanvas.ctx;
   defineGeometryPath(ctx, elem.points);
   ctx.save();
   ctx.clip();
   ctx.clearRect(0, 0, imageCanvas.width, imageCanvas.height);
   ctx.restore();
+
+  // Sync the cleared area back into the pixel data
+  const [minX, minY, maxX, maxY] = boundingBox(elem.points);
+  const area = ctx.getImageData(minX, minY, maxX - minX, maxY - minY).data;
+  const rowLength = (maxX - minX) * 4;
+  for (let y = minY; y < maxY; y++) {
+    const rowStart = (y - minY) * rowLength;
+    data.set(area.subarray(rowStart, rowStart + rowLength), (y * imageCanvas.width + minX) * 4);
+  }
+}
+
+function boundingBox(points: Point2D[]): [number, number, number, number] {
+  let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
+  for (const [x, y] of points) {
+    if (x < minX) minX = x;
+    if (y < minY) minY = y;
+    if (x > maxX) maxX = x;
+    if (y > maxY) maxY = y;
+  }
+  return [minX, minY, maxX, maxY];
 }
