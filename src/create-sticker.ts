@@ -2,11 +2,11 @@ import { addStickerLayer } from "./add-sticker-effect";
 import { d3GeometryContour, d3GeometryContourStart } from "./d3-geometry-contour";
 import { defineGeometryPath } from "./define-geometry-path";
 import { loadImage } from "./load-image";
-import { CreateStickerOptions, DiscreteElement, ImageCanvas } from "./models";
+import { CreateStickerOptions, DiscreteElement, ImageCanvas, StickerImageSource } from "./models";
 
 
-export async function createSticker(imageSrc: string, options?: CreateStickerOptions): Promise<string> {
-  const imageCanvas = await loadImage(imageSrc, options);
+export async function createSticker(image: StickerImageSource, options?: CreateStickerOptions): Promise<string> {
+  const imageCanvas = await loadImage(image, options);
 
   const stickerCanvas = document.createElement('canvas');
   stickerCanvas.width = imageCanvas.width;
@@ -24,7 +24,7 @@ export async function createSticker(imageSrc: string, options?: CreateStickerOpt
 
   // Draw original image on top of stickerCanvas for a better result
   const p = imageCanvas.padding;
-  stickerCanvasCtx.drawImage(imageCanvas.img, p, p);
+  stickerCanvasCtx.drawImage(imageCanvas.image, p, p);
 
   // Get the data URL of the resized image
   return stickerCanvas.toDataURL('image/png', 1); // 1 is the quality from 0 to 1

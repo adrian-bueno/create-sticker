@@ -58,3 +58,27 @@ export function drawTestImage(
   ctx.putImageData(imageData, 0, 0);
   return canvas.toDataURL('image/png');
 }
+
+export async function readPixels(src: string): Promise<Uint8ClampedArray> {
+  const img = await decodeImage(src);
+  const canvas = document.createElement('canvas');
+  canvas.width = img.width;
+  canvas.height = img.height;
+  const ctx = canvas.getContext('2d')!;
+  ctx.drawImage(img, 0, 0);
+  return ctx.getImageData(0, 0, img.width, img.height).data;
+}
+
+// Largest difference between two images, per color and alpha channel
+export async function maxPixelDifference(a: string, b: string): Promise<{ color: number; alpha: number }> {
+  const [pa, pb] = await Promise.all([readPixels(a), readPixels(b)]);
+  if (pa.length !== pb.length)
+    throw new Error('Images have different sizes');
+  let color = 0, alpha = 0;
+  for (let i = 0; i < pa.length; i++) {
+    const d = Math.abs(pa[i] - pb[i]);
+    if (i % 4 === 3) alpha = Math.max(alpha, d);
+    else color = Math.max(color, d);
+  }
+  return { color, alpha };
+}

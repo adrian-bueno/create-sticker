@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { createSticker, CreateStickerOptions } from '../src';
-import { blankImageDataURL, decodeImage, drawTestImage, summarizePixels } from './helpers';
+import { blankImageDataURL, decodeImage, drawTestImage, maxPixelDifference, summarizePixels } from './helpers';
 
 import angularWithHoles from '../demo/images/angular-with-holes.png?url';
 import angularWebp from '../demo/images/angular.webp?url';
@@ -129,5 +129,74 @@ describe('crossOrigin option', () => {
     const image = drawTestImage(30, 30, [[5, 5, 20]]);
     expect(await summarizePixels(await createSticker(image, { crossOrigin: null })))
       .toEqual(await summarizePixels(await createSticker(image)));
+  });
+});
+
+describe('input types', () => {
+  async function expectSameAsURL(source: Parameters<typeof createSticker>[0]) {
+    const expected = await summarizePixels(await createSticker(react));
+    expect(await summarizePixels(await createSticker(source))).toEqual(expected);
+  }
+
+  it('accepts a Blob', async () => {
+    const blob = await (await fetch(react)).blob();
+    await expectSameAsURL(blob);
+  });
+
+  it('accepts a File', async () => {
+    const blob = await (await fetch(react)).blob();
+    await expectSameAsURL(new File([blob], 'react.png', { type: 'image/png' }));
+  });
+
+  it('accepts a loaded HTMLImageElement', async () => {
+    await expectSameAsURL(await decodeImage(react));
+  });
+
+  it('waits for an HTMLImageElement that is still loading', async () => {
+    const img = new Image();
+    img.src = react;
+    await expectSameAsURL(img);
+  });
+
+  it('uses the natural size of an HTMLImageElement with display size attributes', async () => {
+    const img = await decodeImage(react);
+    img.width = 10;
+    img.height = 10;
+    await expectSameAsURL(img);
+  });
+
+  it('accepts an HTMLCanvasElement', async () => {
+    const img = await decodeImage(react);
+    const canvas = document.createElement('canvas');
+    canvas.width = img.width;
+    canvas.height = img.height;
+    canvas.getContext('2d')!.drawImage(img, 0, 0);
+    await expectSameAsURL(canvas);
+  });
+
+  it('accepts an ImageBitmap', async () => {
+    // ImageBitmaps store semi-transparent colors with slightly different
+    // rounding than <img>, so allow a tiny color difference
+    const bitmap = await createImageBitmap(await decodeImage(react));
+    const diff = await maxPixelDifference(await createSticker(bitmap), await createSticker(react));
+    expect(diff.alpha).toBe(0);
+    expect(diff.color).toBeLessThanOrEqual(2);
+  });
+
+  it('accepts an OffscreenCanvas', async () => {
+    const img = await decodeImage(react);
+    const canvas = new OffscreenCanvas(img.width, img.height);
+    canvas.getContext('2d')!.drawImage(img, 0, 0);
+    await expectSameAsURL(canvas);
+  });
+
+  it('rejects an HTMLImageElement that failed to load', async () => {
+    const img = new Image();
+    img.src = 'data:image/png;base64,not-an-image';
+    await expect(createSticker(img)).rejects.toThrow('Error loading image');
+  });
+
+  it('rejects an HTMLImageElement without src', async () => {
+    await expect(createSticker(new Image())).rejects.toThrow('Error loading image');
   });
 });

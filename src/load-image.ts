@@ -1,47 +1,90 @@
-import { CreateStickerOptions, ImageCanvas } from "./models";
+import { CreateStickerOptions, ImageCanvas, StickerImageSource } from "./models";
 
-export function loadImage(imageSrc: string, options?: CreateStickerOptions): Promise<ImageCanvas> {
-  return new Promise((resolve, reject) => {
-    const img = new Image();
+interface DrawableImage {
+  image: CanvasImageSource;
+  width: number;
+  height: number;
+}
 
-    img.onload = () => {
-      try {
-        resolve(buildImageCanvas(img, options));
-      } catch (error) {
-        reject(error);
-      }
-    };
+export async function loadImage(source: StickerImageSource, options?: CreateStickerOptions): Promise<ImageCanvas> {
+  const image = await toDrawableImage(source, options);
+  return buildImageCanvas(image, options);
+}
 
-    img.onerror = () => reject(new Error("Error loading image"));
-
+async function toDrawableImage(source: StickerImageSource, options?: CreateStickerOptions): Promise<DrawableImage> {
+  if (typeof source === "string") {
     // Request remote images with CORS so their pixels can be read
     const crossOrigin = options?.crossOrigin === undefined ? defaultOptions.crossOrigin : options.crossOrigin;
-    if (crossOrigin != null)
-      img.crossOrigin = crossOrigin;
+    return fromImageElement(await loadImageElement(source, crossOrigin));
+  }
 
-    img.src = imageSrc;
+  if (source instanceof Blob) {
+    const url = URL.createObjectURL(source);
+    try {
+      return fromImageElement(await loadImageElement(url, null));
+    } finally {
+      URL.revokeObjectURL(url);
+    }
+  }
+
+  if (source instanceof HTMLImageElement) {
+    return fromImageElement(await waitForImageElement(source));
+  }
+
+  // Canvas or bitmap
+  return { image: source, width: source.width, height: source.height };
+}
+
+function fromImageElement(img: HTMLImageElement): DrawableImage {
+  return { image: img, width: img.naturalWidth, height: img.naturalHeight };
+}
+
+function loadImageElement(src: string, crossOrigin: string | null | undefined): Promise<HTMLImageElement> {
+  const img = new Image();
+
+  if (crossOrigin != null)
+    img.crossOrigin = crossOrigin;
+
+  img.src = src;
+
+  return waitForImageElement(img);
+}
+
+function waitForImageElement(img: HTMLImageElement): Promise<HTMLImageElement> {
+  return new Promise((resolve, reject) => {
+    // A complete image with no size failed to load (or has no src)
+    if (img.complete) {
+      if (img.naturalWidth > 0)
+        resolve(img);
+      else
+        reject(new Error("Error loading image"));
+      return;
+    }
+
+    img.addEventListener("load", () => resolve(img), { once: true });
+    img.addEventListener("error", () => reject(new Error("Error loading image")), { once: true });
   });
 }
 
 // Load the image in a canvas with a transparent border.
 // The border ensures the contour algorithm works and that
 // the sticker stroke is not clipped at the edges.
-function buildImageCanvas(img: HTMLImageElement, options?: CreateStickerOptions): ImageCanvas {
+function buildImageCanvas({ image, width, height }: DrawableImage, options?: CreateStickerOptions): ImageCanvas {
   const canvas = document.createElement('canvas');
   const ctx = canvas.getContext('2d', { willReadFrequently: true })!;
 
   const padding = getPadding(options);
 
-  canvas.width = img.width + padding*2;
-  canvas.height = img.height + padding*2;
+  canvas.width = width + padding*2;
+  canvas.height = height + padding*2;
 
   // Draw the image on canvas
-  ctx.drawImage(img, padding, padding);
+  ctx.drawImage(image, padding, padding);
 
   assertCanvasIsReadable(ctx);
 
   return {
-    img,
+    image,
     canvas,
     ctx,
     width: canvas.width,

@@ -1,7 +1,8 @@
 import { CreateStickerOptions } from "./create-sticker-options";
 
 export interface ImageCanvas {
-  img: HTMLImageElement;
+  /** Source image, drawn at (padding, padding) */
+  image: CanvasImageSource;
   canvas: HTMLCanvasElement;
   ctx: CanvasRenderingContext2D;
   width: number;

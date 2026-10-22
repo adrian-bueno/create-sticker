@@ -67,9 +67,13 @@ async function modifyImage(img) {
 
 ## API
 
-### `createSticker(imageSrc, options?)`
+### `createSticker(image, options?)`
 
-- `imageSrc`: `string`. Any URL an `<img>` can load (http(s), data URL, blob URL).
+- `image`: one of
+  - `string`: any URL an `<img>` can load (http(s), data URL, blob URL)
+  - `Blob` / `File` (for example from an `<input type="file">`)
+  - `HTMLImageElement`: loaded or still loading; its natural size is used
+  - `HTMLCanvasElement`, `OffscreenCanvas` or `ImageBitmap`
 - Returns `Promise<string>`: a PNG data URL of the sticker image.
 
 ### Options

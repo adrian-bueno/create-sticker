@@ -12,6 +12,7 @@ These changes are breaking (the API or default output would change), so they are
 ## [Unreleased]
 
 ### Added
+- `createSticker` also accepts a `Blob`/`File`, `HTMLImageElement`, `HTMLCanvasElement`, `OffscreenCanvas` or `ImageBitmap`, not only a URL string. The new `StickerImageSource` type is exported.
 - `alphaThreshold` option: ignore nearly transparent pixels when finding outlines. The default `0` keeps the current behavior.
 - `crossOrigin` option (default `"anonymous"`): remote images are requested with CORS, so images from servers that allow CORS now work instead of failing with a tainted canvas `SecurityError`. If the pixels still cannot be read, the error explains why.
 

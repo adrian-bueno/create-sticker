@@ -15,14 +15,14 @@ Guidance for AI coding agents working on this repository.
 
 `createSticker(src, options)` in `src/create-sticker.ts`:
 
-1. `loadImage` (`src/load-image.ts`): loads the image into a canvas with transparent padding and merges the options with the defaults.
+1. `loadImage` (`src/load-image.ts`): resolves the input (URL, Blob, image, canvas or bitmap) and draws it into a canvas with transparent padding and merges the options with the defaults.
 2. `forEachDiscreteElement` finds each group of non-transparent pixels ("discrete element") and traces its outline with marching squares (`src/d3-geometry-contour.ts`, ported from d3-contour). The pixel data is read once. The start-point scan resumes where it stopped, and after each element is erased from the image canvas, only its bounding box is read again.
 3. For each element, on a single output canvas: draw the element's pixels, then `addStickerLayer` (`src/add-sticker-effect.ts`) strokes and optionally fills the outline, then draw the element's pixels again.
 4. Draw the original image on top and return a PNG data URL.
 
 Other files:
 - `src/define-geometry-path.ts`: builds a canvas path from contour points.
-- `src/models/`: public and internal types. Only `CreateStickerOptions` and `createSticker` are exported from `src/index.ts`.
+- `src/models/`: public and internal types. `src/index.ts` exports the public API: `createSticker` and the `CreateStickerOptions` and `StickerImageSource` types. Everything else is internal.
 
 ## Commands
 
