@@ -1,0 +1,169 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`createSticker output snapshots > angular.webp / defaults 1`] = `
+{
+  "height": 1940,
+  "sha256": "5caa4fcce834c43c099371cda8830dcebc16e356c381fb2a614752fc814a6a1c",
+  "width": 1940,
+}
+`;
+
+exports[`createSticker output snapshots > angular.webp / demo 1`] = `
+{
+  "height": 1960,
+  "sha256": "dc5170f92cb8a33b58b1abc93d76f1f7fe971f9ebf13d2dfd3a5734aa1a904c8",
+  "width": 1960,
+}
+`;
+
+exports[`createSticker output snapshots > angular.webp / no-fill-holes 1`] = `
+{
+  "height": 1930,
+  "sha256": "dd7e273896ca9e08d621fc85810ede91f2cd8935cc7fe405615fd27e572efe92",
+  "width": 1930,
+}
+`;
+
+exports[`createSticker output snapshots > angular-with-holes.png / defaults 1`] = `
+{
+  "height": 1940,
+  "sha256": "ffedd6e9a6d0310e12137466e8793c36bd78c2872e9724cbf47f972a5643728e",
+  "width": 1940,
+}
+`;
+
+exports[`createSticker output snapshots > angular-with-holes.png / demo 1`] = `
+{
+  "height": 1960,
+  "sha256": "de716fc74376e10e5692e728138ab9190965004b89058094ce0fabd95e4488b1",
+  "width": 1960,
+}
+`;
+
+exports[`createSticker output snapshots > angular-with-holes.png / no-fill-holes 1`] = `
+{
+  "height": 1930,
+  "sha256": "9c4873094f20fa43d2e4b5efabb6c7d676992d61d438ed715c8c9e624a60ea94",
+  "width": 1930,
+}
+`;
+
+exports[`createSticker output snapshots > hand.png / defaults 1`] = `
+{
+  "height": 548,
+  "sha256": "bfac7c6ac992e608e9751c357885657ab1f7a305caa0e33b91580f4f2bef091e",
+  "width": 416,
+}
+`;
+
+exports[`createSticker output snapshots > hand.png / demo 1`] = `
+{
+  "height": 568,
+  "sha256": "20d1e106a8f07c756ef58879ddc63256ff0aa614b872b9faa489fdf31fc8e74d",
+  "width": 436,
+}
+`;
+
+exports[`createSticker output snapshots > hand.png / no-fill-holes 1`] = `
+{
+  "height": 538,
+  "sha256": "59367e475f2ff85d6b8378729b0eb593115187695c42e47513b3031eb588e58c",
+  "width": 406,
+}
+`;
+
+exports[`createSticker output snapshots > openmoji-happy-cat.png / defaults 1`] = `
+{
+  "height": 638,
+  "sha256": "41bbaabe0122650a4e0ab2be1006eab67542dac46adbf1024483424b34c07232",
+  "width": 638,
+}
+`;
+
+exports[`createSticker output snapshots > openmoji-happy-cat.png / demo 1`] = `
+{
+  "height": 658,
+  "sha256": "b8d49ff253842bd2932a8f990366f603fe434157c7854293832f9d12da263520",
+  "width": 658,
+}
+`;
+
+exports[`createSticker output snapshots > openmoji-happy-cat.png / no-fill-holes 1`] = `
+{
+  "height": 628,
+  "sha256": "5db1dc5818547c3bfa8909275f585c7a96d8689bfd58f674e59fd23501f1704c",
+  "width": 628,
+}
+`;
+
+exports[`createSticker output snapshots > react.png / defaults 1`] = `
+{
+  "height": 476,
+  "sha256": "a235f20d31cb217f66683ea052b1f3c6ed10efa24f75e4b5aff6f38a9e162910",
+  "width": 532,
+}
+`;
+
+exports[`createSticker output snapshots > react.png / demo 1`] = `
+{
+  "height": 496,
+  "sha256": "81f300ef521ed359a83b72811a2e6bb2b1caff0343c399a84eded63864b6401a",
+  "width": 552,
+}
+`;
+
+exports[`createSticker output snapshots > react.png / no-fill-holes 1`] = `
+{
+  "height": 466,
+  "sha256": "c1aea002c98155c72ce516b1b477b8bf58273cb5be515897053b0666af605a3f",
+  "width": 522,
+}
+`;
+
+exports[`createSticker output snapshots > square.jpg / defaults 1`] = `
+{
+  "height": 520,
+  "sha256": "03a9c6287e15dac7e06e84fd0d7367e6f8b4990b998070f44e34920084114562",
+  "width": 520,
+}
+`;
+
+exports[`createSticker output snapshots > square.jpg / demo 1`] = `
+{
+  "height": 540,
+  "sha256": "5414273c5f8e73c1c920572e95a0992ac523eae7f4e6d08e1a245f46951a92f0",
+  "width": 540,
+}
+`;
+
+exports[`createSticker output snapshots > square.jpg / no-fill-holes 1`] = `
+{
+  "height": 510,
+  "sha256": "fdf3cacf44b44039f6a06cf0170b512c9be790c6d829cab8c76bf204c2c883f4",
+  "width": 510,
+}
+`;
+
+exports[`createSticker output snapshots > square-2.png / defaults 1`] = `
+{
+  "height": 520,
+  "sha256": "735b34abb48355d7a874cfc4a88b0bb4f7507e811297cf39b04f3c4ccb3a8e17",
+  "width": 520,
+}
+`;
+
+exports[`createSticker output snapshots > square-2.png / demo 1`] = `
+{
+  "height": 540,
+  "sha256": "850c1c4e2062f8b53c6b53757f9ed6971e8a863ed92984e963cb3da1250229bd",
+  "width": 540,
+}
+`;
+
+exports[`createSticker output snapshots > square-2.png / no-fill-holes 1`] = `
+{
+  "height": 510,
+  "sha256": "26efe51f684b1c56fd91d263725e2045a7960a98b95e53a429fe3bdd62724c16",
+  "width": 510,
+}
+`;

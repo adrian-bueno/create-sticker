@@ -7,9 +7,9 @@ description: Run the full validation checklist for create-sticker (build, type-c
 
 Run each step from the repo root and stop at the first failure. Report which step failed and the relevant output.
 
-1. **Type-check:** `npx tsc --noEmit`
+1. **Type-check:** `npm run typecheck`
 2. **Build:** `npm run build`. Then confirm that `dist/bundle.iife.js`, `dist/bundle.esm.mjs`, `dist/types/index.d.ts` and `dist/package.json` exist.
-3. **Tests:** if `package.json` has a `test` script, run `npm test`.
-4. **Visual changes:** if the change can affect the output image, run `npm run demo` and check the images in `demo/images/` against the screenshots in `docs/`. Or rely on the snapshot tests if they exist.
+3. **Tests:** `npm test`. If a snapshot fails, the output image changed. That is a failure unless the change is an intended, opt-in output change.
+4. **Visual changes:** if the change can affect the output image, run `npm run demo` and check the images in `demo/images/` against the screenshots in `docs/`. This complements the snapshot tests.
 
 End with a one-line summary: `verify: PASS` or `verify: FAIL (<step>)`. Only commit after a PASS.

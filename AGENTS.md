@@ -28,9 +28,19 @@ Other files:
 ```sh
 npm install
 npm run build      # tsc (declarations only) + esbuild IIFE and ESM bundles into dist/
-npx tsc --noEmit   # type-check
+npm run typecheck  # type-check src/ and test/
+npm test           # Vitest browser mode (Playwright Chromium)
+npm run test:update  # rewrite snapshots after an intended output change
 npm run demo       # serves demo/index.html on http://localhost:3000 (run build first)
 ```
+
+The first test run needs a browser: `npx playwright install chromium`.
+
+## Tests
+
+- `test/create-sticker.test.ts` runs `createSticker` on every image in `demo/images/` with several option sets.
+- Each result is snapshotted as width, height and a SHA-256 hash of the decoded RGBA pixels (`test/__snapshots__/`). A snapshot change means the output image changed.
+- In 1.x, existing snapshots must not change: refactors and new opt-in options must keep them identical. Only update them (`npm run test:update`) for an intended, non-default output change, and give the reason in the commit message.
 
 ## Conventions
 
@@ -42,7 +52,7 @@ npm run demo       # serves demo/index.html on http://localhost:3000 (run build 
 
 - **Keep 1.x non-breaking.** No changes to existing function signatures or return types, and no changes to the default output (image size or pixels). New behavior must be opt-in through options whose defaults keep the current result. Record breaking ideas under "Planned for 2.0" in the CHANGELOG instead of implementing them.
 - **One change per commit.** Do not mix unrelated changes.
-- **Validate before committing.** Build, type-check and test (once tests exist). For visual changes, also check the demo. Never commit a broken state.
+- **Validate before committing.** Type-check, test and build. For visual changes, also check the demo. Never commit a broken state.
 - **Never push, tag or publish.** No `git push`, no `git tag`, no `npm publish`. Pushing a `v*.*.*` tag triggers `.github/workflows/publish-release.yml`, which publishes to npm. Releases are done by the maintainer.
 
 ## Release flow (maintainer)

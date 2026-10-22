@@ -33,6 +33,9 @@
   "scripts": {
     "clean": "rm -rf dist",
     "build": "node build.js",
+    "typecheck": "tsc --noEmit -p tsconfig.test.json",
+    "test": "vitest run",
+    "test:update": "vitest run --update",
     "publish": "cd dist && npm publish",
     "demo": "http-server -p 3000 -c-1 -o demo/index.html"
   },
@@ -40,8 +43,11 @@
     "*"
   ],
   "devDependencies": {
+    "@vitest/browser-playwright": "^5.0.5",
     "esbuild": "^0.28.2",
     "http-server": "^14.1.1",
-    "typescript": "^6.0.3"
+    "playwright": "^1.64.1",
+    "typescript": "^6.0.3",
+    "vitest": "^5.0.5"
   }
 }
