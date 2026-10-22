@@ -57,6 +57,11 @@ export interface CreateStickerOptions {
    */
   shadow?: boolean | StickerShadowOptions;
   /**
+   * Crop the result to its visible content, removing any transparent margin
+   * (extra padding or transparent borders in the source image). Default: false
+   */
+  trim?: boolean;
+  /**
    * Image format of the result of createSticker and createStickerBlob, e.g. "image/webp".
    * Formats the browser cannot encode fall back to PNG. Default: "image/png"
    */

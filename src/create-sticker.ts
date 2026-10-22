@@ -5,6 +5,7 @@ import { boundingBox } from "./bounding-box";
 import { defineGeometryPath } from "./define-geometry-path";
 import { findInnerContours } from "./inner-contours";
 import { loadImage } from "./load-image";
+import { trimCanvas } from "./trim-canvas";
 import { CreateStickerOptions, DiscreteElement, ImageCanvas, StickerImageSource } from "./models";
 
 
@@ -65,11 +66,16 @@ export async function createStickerCanvas(image: StickerImageSource, options?: C
   const p = imageCanvas.padding;
   stickerCanvasCtx.drawImage(imageCanvas.image, p, p);
 
+  let result = stickerCanvas;
+
   const shadow = imageCanvas.options.shadow;
   if (shadow)
-    return addShadow(stickerCanvas, shadow);
+    result = addShadow(result, shadow);
 
-  return stickerCanvas;
+  if (imageCanvas.options.trim)
+    result = trimCanvas(result);
+
+  return result;
 }
 
 // Draw just the pixels of a discrete element (from the source image,

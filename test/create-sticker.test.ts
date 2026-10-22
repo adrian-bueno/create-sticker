@@ -371,3 +371,39 @@ describe('strokeHoles option', () => {
     expect(await summarizePixels(await createSticker(angularWithHoles, { fillHoles: false, strokeHoles: true, strokeColor: 'black' }))).toMatchSnapshot();
   });
 });
+
+describe('trim option', () => {
+  it('crops the transparent margin around the sticker', async () => {
+    // 40x40 square in a 100x100 image, stroke 10: visible content is 50x50
+    const image = drawTestImage(100, 100, [[30, 30, 40]]);
+    const result = await decodeImage(await createSticker(image, { strokeWidth: 10, padding: 20, trim: true }));
+    expect(result.width).toBe(50);
+    expect(result.height).toBe(50);
+  });
+
+  it('keeps the same pixels, only cropped', async () => {
+    const image = drawTestImage(100, 100, [[30, 30, 40]]);
+    const trimmed = await readPixels(await createSticker(image, { strokeWidth: 10, trim: true }));
+    const full = await readPixels(await createSticker(image, { strokeWidth: 10 }));
+    // full is 110x110 with the content at 30..80
+    for (let y = 0; y < 50; y++) {
+      for (let x = 0; x < 50; x++) {
+        const i = (y * 50 + x) * 4;
+        const j = ((y + 30) * 110 + (x + 30)) * 4;
+        expect([...trimmed.slice(i, i + 4)]).toEqual([...full.slice(j, j + 4)]);
+      }
+    }
+  });
+
+  it('keeps the shadow', async () => {
+    const image = drawTestImage(100, 100, [[30, 30, 40]]);
+    const withShadow = await decodeImage(await createSticker(image, { strokeWidth: 10, trim: true, shadow: true }));
+    expect(withShadow.width).toBeGreaterThan(50);
+  });
+
+  it('leaves a fully transparent result unchanged', async () => {
+    const result = await decodeImage(await createSticker(blankImageDataURL(40, 30), { strokeWidth: 10, trim: true }));
+    expect(result.width).toBe(50);
+    expect(result.height).toBe(40);
+  });
+});

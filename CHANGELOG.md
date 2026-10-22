@@ -12,6 +12,7 @@ These changes are breaking (the API or default output would change), so they are
 ## [Unreleased]
 
 ### Added
+- `trim` option: crop the result to its visible content.
 - `strokeHoles` option: with `fillHoles: false`, also stroke the inner edges of transparent holes and the elements inside them.
 - `outlines` option: extra outlines around the stroke, such as a thin grey border around a white stroke.
 - `shadow` option: a drop shadow under the whole sticker (`true` for the default shadow, or `{ color, blur, offsetX, offsetY }`).
