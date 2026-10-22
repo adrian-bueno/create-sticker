@@ -3,3 +3,5 @@ node_modules
 
 src/**/*.js
 src/**/*.js.map
+
+.claude/settings.local.json
