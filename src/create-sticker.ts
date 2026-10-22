@@ -1,3 +1,4 @@
+import { addShadow } from "./add-shadow";
 import { addStickerLayer } from "./add-sticker-effect";
 import { d3GeometryContour, d3GeometryContourStart } from "./d3-geometry-contour";
 import { defineGeometryPath } from "./define-geometry-path";
@@ -44,6 +45,10 @@ export async function createStickerCanvas(image: StickerImageSource, options?: C
   // Draw original image on top of stickerCanvas for a better result
   const p = imageCanvas.padding;
   stickerCanvasCtx.drawImage(imageCanvas.image, p, p);
+
+  const shadow = imageCanvas.options.shadow;
+  if (shadow)
+    return addShadow(stickerCanvas, shadow);
 
   return stickerCanvas;
 }

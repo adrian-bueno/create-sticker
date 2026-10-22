@@ -167,3 +167,11 @@ exports[`createSticker output snapshots > square-2.png / no-fill-holes 1`] = `
   "width": 510,
 }
 `;
+
+exports[`shadow option > matches the shadow snapshot 1`] = `
+{
+  "height": 500,
+  "sha256": "500e9428551a9ec663e78e4bd2483a1e8abb5c6a4f86119f95ace424e5a6d58c",
+  "width": 556,
+}
+`;

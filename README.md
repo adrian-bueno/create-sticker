@@ -96,6 +96,7 @@ All options are optional.
 | `padding` | `number` | `Math.ceil(strokeWidth / 2)` | Transparent space added around the image, in pixels (see below). |
 | `alphaThreshold` | `number` | `0` | Pixels with alpha (0-255) at or below this value are ignored when finding outlines, so faint noise or antialiasing halos do not get their own outline. They are still drawn. Try `10`-`20` for photos or lossy images. |
 | `crossOrigin` | `"anonymous" \| "use-credentials" \| null` | `"anonymous"` | CORS mode used to load the image. Use `null` to not set it. |
+| `shadow` | `boolean \| { color?, blur?, offsetX?, offsetY? }` | none | Drop shadow under the whole sticker. `true` uses `{ color: "rgba(0, 0, 0, 0.4)", blur: 8, offsetX: 0, offsetY: 4 }`. The image grows so the shadow is not clipped. |
 | `outputType` | `string` | `"image/png"` | Format of the `createSticker`/`createStickerBlob` result, for example `"image/webp"`. Formats the browser cannot encode fall back to PNG. |
 | `outputQuality` | `number` | `1` | Quality from 0 to 1 for lossy formats (`image/jpeg`, `image/webp`). |
 

@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { createSticker, createStickerBlob, createStickerCanvas, CreateStickerOptions } from '../src';
-import { blankImageDataURL, decodeImage, drawTestImage, maxPixelDifference, summarizePixels } from './helpers';
+import { blankImageDataURL, decodeImage, drawTestImage, maxPixelDifference, readPixels, summarizePixels } from './helpers';
 
 import angularWithHoles from '../demo/images/angular-with-holes.png?url';
 import angularWebp from '../demo/images/angular.webp?url';
@@ -226,5 +226,56 @@ describe('output types', () => {
     expect(blob.type).toBe('image/webp');
     const low = await createStickerBlob(react, { outputType: 'image/webp', outputQuality: 0.1 });
     expect(low.size).toBeLessThan(blob.size);
+  });
+});
+
+describe('shadow option', () => {
+  const square = drawTestImage(60, 60, [[10, 10, 40]]);
+
+  it('does not change the output when false', async () => {
+    expect(await summarizePixels(await createSticker(square, { shadow: false })))
+      .toEqual(await summarizePixels(await createSticker(square)));
+  });
+
+  it('grows the image to fit the default shadow', async () => {
+    // padding 10 on each side; default shadow: blur 8 (spread 12), offsetY 4
+    const result = await decodeImage(await createSticker(square, { shadow: true }));
+    expect(result.width).toBe(80 + 12 + 12);
+    expect(result.height).toBe(80 + 8 + 16);
+  });
+
+  it('draws the shadow below the sticker without clipping it', async () => {
+    const options: CreateStickerOptions = { strokeWidth: 10, shadow: { color: 'black', blur: 6, offsetX: 5, offsetY: 5 } };
+    const result = await createSticker(square, options);
+    const img = await decodeImage(result);
+    const data = await readPixels(result);
+    const alphaAt = (x: number, y: number) => data[(y * img.width + x) * 4 + 3];
+
+    // The canvas edges are (almost) transparent: the shadow fits
+    for (let x = 0; x < img.width; x++) {
+      expect(alphaAt(x, 0)).toBeLessThanOrEqual(1);
+      expect(alphaAt(x, img.height - 1)).toBeLessThanOrEqual(1);
+    }
+    for (let y = 0; y < img.height; y++) {
+      expect(alphaAt(0, y)).toBeLessThanOrEqual(1);
+      expect(alphaAt(img.width - 1, y)).toBeLessThanOrEqual(1);
+    }
+
+    // padding 5, so the plain sticker is 70x70 with the stroke from 10 to 60.
+    // Shadow spread 9: left = top = 9 - 5 = 4, so the sticker is at 14..64
+    // and just past its bottom-right corner there is only shadow
+    expect(alphaAt(66, 66)).toBeGreaterThan(0);
+    // The sticker itself is drawn on top of the shadow: same pixels as without shadow
+    const plain = await readPixels(await createSticker(square, { strokeWidth: 10 }));
+    const plainWidth = 70;
+    for (const [x, y] of [[20, 20], [40, 40], [12, 40]]) {
+      const i = (y * plainWidth + x) * 4;
+      const j = ((y + 4) * img.width + (x + 4)) * 4;
+      expect([...data.slice(j, j + 4)]).toEqual([...plain.slice(i, i + 4)]);
+    }
+  });
+
+  it('matches the shadow snapshot', async () => {
+    expect(await summarizePixels(await createSticker(react, { shadow: true }))).toMatchSnapshot();
   });
 });

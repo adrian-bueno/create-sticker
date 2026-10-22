@@ -12,6 +12,7 @@ These changes are breaking (the API or default output would change), so they are
 ## [Unreleased]
 
 ### Added
+- `shadow` option: a drop shadow under the whole sticker (`true` for the default shadow, or `{ color, blur, offsetX, offsetY }`).
 - `createStickerBlob` and `createStickerCanvas` return the sticker as a `Blob` or a canvas. `createSticker` still returns a data URL.
 - `outputType` and `outputQuality` options to encode the result as another format, such as WebP.
 - `createSticker` also accepts a `Blob`/`File`, `HTMLImageElement`, `HTMLCanvasElement`, `OffscreenCanvas` or `ImageBitmap`, not only a URL string. The new `StickerImageSource` type is exported.

@@ -1,3 +1,14 @@
+export interface StickerShadowOptions {
+  /** Default: "rgba(0, 0, 0, 0.4)" */
+  color?: string;
+  /** Blur amount, like CanvasRenderingContext2D.shadowBlur. Default: 8 */
+  blur?: number;
+  /** Default: 0 */
+  offsetX?: number;
+  /** Default: 4 */
+  offsetY?: number;
+}
+
 export interface CreateStickerOptions {
   /** Default: 20 */
   strokeWidth?: number;
@@ -22,6 +33,11 @@ export interface CreateStickerOptions {
    * pixels can be read. Use null to not set it. Default: "anonymous"
    */
   crossOrigin?: "anonymous" | "use-credentials" | null;
+  /**
+   * Drop shadow under the whole sticker. `true` uses the default shadow.
+   * The image grows as needed so the shadow is not clipped. Default: no shadow
+   */
+  shadow?: boolean | StickerShadowOptions;
   /**
    * Image format of the result of createSticker and createStickerBlob, e.g. "image/webp".
    * Formats the browser cannot encode fall back to PNG. Default: "image/png"
