@@ -50,5 +50,6 @@ const defaultOptions: CreateStickerOptions = {
   strokeColor: "white",
   strokeWidth: 20,
   padding: 1,
-  fillHoles: true
+  fillHoles: true,
+  alphaThreshold: 0
 }

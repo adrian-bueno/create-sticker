@@ -13,14 +13,14 @@ const d3GeometryContourDx = [1, 0, 1, 1, -1, 0, -1, 1, 0, 0, 0, 0, -1, 0, -1, Na
       d3GeometryContourDy = [0, -1, 0, 0, 0, -1, 0, 0, 1, -1, 1, 1, 0, -1, 0, NaN];
 
 // true/false function used by the edge detection method
-function defineNonTransparent(data: Uint8ClampedArray, canvasWidth: number, x: number, y: number): boolean {
-  return (data[(y * canvasWidth + x) * 4 + 3] > 0);
+function defineNonTransparent(data: Uint8ClampedArray, canvasWidth: number, alphaThreshold: number, x: number, y: number): boolean {
+  return (data[(y * canvasWidth + x) * 4 + 3] > alphaThreshold);
 }
 
 // Search for a starting point: begin at the origin and proceed along
 // outward-expanding diagonals, resuming from the previous starting point
 // (pixels before it were already checked and can only have been cleared).
-export function d3GeometryContourStart(data: Uint8ClampedArray, canvasWidth: number, canvasHeight: number, from: Point2D = [0, 0]): Point2D | null {
+export function d3GeometryContourStart(data: Uint8ClampedArray, canvasWidth: number, canvasHeight: number, alphaThreshold: number, from: Point2D = [0, 0]): Point2D | null {
   const maxDiagonal = canvasWidth + canvasHeight - 2;
   let d = from[0] + from[1];
   let x = from[0];
@@ -28,7 +28,7 @@ export function d3GeometryContourStart(data: Uint8ClampedArray, canvasWidth: num
   while (d <= maxDiagonal) {
     const minX = Math.max(0, d - canvasHeight + 1);
     for (; x >= minX; x--) {
-      if (defineNonTransparent(data, canvasWidth, x, d - x)) {
+      if (defineNonTransparent(data, canvasWidth, alphaThreshold, x, d - x)) {
         return [x, d - x];
       }
     }
@@ -40,7 +40,7 @@ export function d3GeometryContourStart(data: Uint8ClampedArray, canvasWidth: num
 }
 
 // Edge detection
-export function d3GeometryContour(data: Uint8ClampedArray, canvasWidth: number, s: Point2D): Point2D[] {
+export function d3GeometryContour(data: Uint8ClampedArray, canvasWidth: number, alphaThreshold: number, s: Point2D): Point2D[] {
   const c: Point2D[] = []; // contour polygon
 
   let x = s[0], // current x position
@@ -54,10 +54,10 @@ export function d3GeometryContour(data: Uint8ClampedArray, canvasWidth: number, 
   do {
     // determine marching squares index
     i = 0;
-    if (defineNonTransparent(data, canvasWidth, x - 1, y - 1)) i += 1;
-    if (defineNonTransparent(data, canvasWidth, x, y - 1)) i += 2;
-    if (defineNonTransparent(data, canvasWidth, x - 1, y)) i += 4;
-    if (defineNonTransparent(data, canvasWidth, x, y)) i += 8;
+    if (defineNonTransparent(data, canvasWidth, alphaThreshold, x - 1, y - 1)) i += 1;
+    if (defineNonTransparent(data, canvasWidth, alphaThreshold, x, y - 1)) i += 2;
+    if (defineNonTransparent(data, canvasWidth, alphaThreshold, x - 1, y)) i += 4;
+    if (defineNonTransparent(data, canvasWidth, alphaThreshold, x, y)) i += 8;
 
     // determine next direction
     if (i === 6) {

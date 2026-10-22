@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { createSticker, CreateStickerOptions } from '../src';
-import { blankImageDataURL, decodeImage, summarizePixels } from './helpers';
+import { blankImageDataURL, decodeImage, drawTestImage, summarizePixels } from './helpers';
 
 import angularWithHoles from '../demo/images/angular-with-holes.png?url';
 import angularWebp from '../demo/images/angular.webp?url';
@@ -63,5 +63,45 @@ describe('createSticker edge cases', () => {
 
   it('rejects when the image cannot be loaded', async () => {
     await expect(createSticker('data:image/png;base64,not-an-image')).rejects.toThrow('Error loading image');
+  });
+});
+
+describe('alphaThreshold option', () => {
+  const squareOnly = drawTestImage(60, 60, [[10, 10, 20]]);
+  const squareWithFaintPixel = drawTestImage(60, 60, [[10, 10, 20]], [[50, 50, 8]]);
+  const options: CreateStickerOptions = { strokeWidth: 6, strokeColor: 'black' };
+
+  it('outlines faint pixels by default (alphaThreshold 0)', async () => {
+    const withPixel = await summarizePixels(await createSticker(squareWithFaintPixel, options));
+    const without = await summarizePixels(await createSticker(squareOnly, options));
+    expect(withPixel.sha256).not.toBe(without.sha256);
+  });
+
+  it('gives the same result as alphaThreshold 0 when not set', async () => {
+    const unset = await createSticker(squareWithFaintPixel, options);
+    const zero = await createSticker(squareWithFaintPixel, { ...options, alphaThreshold: 0 });
+    expect(await summarizePixels(unset)).toEqual(await summarizePixels(zero));
+  });
+
+  it('ignores pixels at or below the threshold when finding outlines', async () => {
+    const result = await createSticker(squareWithFaintPixel, { ...options, alphaThreshold: 8 });
+    const ignored = await decodeImage(result);
+    const reference = await decodeImage(await createSticker(squareOnly, options));
+    const read = (img: HTMLImageElement) => {
+      const canvas = document.createElement('canvas');
+      canvas.width = img.width;
+      canvas.height = img.height;
+      const ctx = canvas.getContext('2d')!;
+      ctx.drawImage(img, 0, 0);
+      return ctx.getImageData(0, 0, img.width, img.height).data;
+    };
+    const a = read(ignored), b = read(reference);
+    // Only the faint pixel itself (padding 3 + 50) differs: it is drawn, but not outlined
+    const faintIndex = ((3 + 50) * ignored.width + (3 + 50)) * 4;
+    for (let i = 0; i < a.length; i += 4) {
+      if (i === faintIndex) continue;
+      expect([a[i], a[i + 1], a[i + 2], a[i + 3]]).toEqual([b[i], b[i + 1], b[i + 2], b[i + 3]]);
+    }
+    expect(a[faintIndex + 3]).toBe(8);
   });
 });

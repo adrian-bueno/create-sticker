@@ -82,6 +82,7 @@ All options are optional.
 | `strokeColor` | `string` | `"white"` | Any CSS color. |
 | `fillHoles` | `boolean` | `true` | Fill transparent holes inside an object with `strokeColor`. |
 | `padding` | `number` | `Math.ceil(strokeWidth / 2)` | Transparent space added around the image, in pixels (see below). |
+| `alphaThreshold` | `number` | `0` | Pixels with alpha (0-255) at or below this value are ignored when finding outlines, so faint noise or antialiasing halos do not get their own outline. They are still drawn. Try `10`-`20` for photos or lossy images. |
 
 `padding` is the transparent space added around the image, so the stroke is not clipped at the edges. The output image is `padding * 2` pixels wider and taller than the input.
 

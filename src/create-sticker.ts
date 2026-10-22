@@ -50,17 +50,20 @@ function forEachDiscreteElement(imageCanvas: ImageCanvas, callback: (elem: Discr
   // Read the pixels once; only the area of each removed element is read again
   const data = imageCanvas.ctx.getImageData(0, 0, imageCanvas.width, imageCanvas.height).data;
 
-  let start = d3GeometryContourStart(data, imageCanvas.width, imageCanvas.height);
+  const { width, height } = imageCanvas;
+  const alphaThreshold = imageCanvas.options.alphaThreshold ?? 0;
+
+  let start = d3GeometryContourStart(data, width, height, alphaThreshold);
 
   while (start) {
     // get the point-path that outlines a discrete element
-    const points = d3GeometryContour(data, imageCanvas.width, start);
+    const points = d3GeometryContour(data, width, alphaThreshold, start);
     const elem = { points, bounds: boundingBox(points) };
 
     callback(elem);
     removeDiscreteElementFromCanvas(imageCanvas, data, elem);
 
-    start = d3GeometryContourStart(data, imageCanvas.width, imageCanvas.height, start);
+    start = d3GeometryContourStart(data, width, height, alphaThreshold, start);
   }
 }
 

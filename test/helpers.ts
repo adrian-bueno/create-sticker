@@ -34,3 +34,27 @@ export function blankImageDataURL(width: number, height: number): string {
   canvas.height = height;
   return canvas.toDataURL('image/png');
 }
+
+// Draw a test image: opaque squares plus optional single pixels with a given alpha
+export function drawTestImage(
+  width: number,
+  height: number,
+  squares: [x: number, y: number, size: number][],
+  pixels: [x: number, y: number, alpha: number][] = [],
+): string {
+  const canvas = document.createElement('canvas');
+  canvas.width = width;
+  canvas.height = height;
+  const ctx = canvas.getContext('2d')!;
+  ctx.fillStyle = 'red';
+  for (const [x, y, size] of squares) {
+    ctx.fillRect(x, y, size, size);
+  }
+  const imageData = ctx.getImageData(0, 0, width, height);
+  for (const [x, y, alpha] of pixels) {
+    const i = (y * width + x) * 4;
+    imageData.data.set([255, 0, 0, alpha], i);
+  }
+  ctx.putImageData(imageData, 0, 0);
+  return canvas.toDataURL('image/png');
+}

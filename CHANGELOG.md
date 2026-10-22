@@ -9,6 +9,11 @@ These changes are breaking (the API or default output would change), so they are
 - Clamp `padding` to at least `strokeWidth / 2`, so the stroke is never clipped (this changes the output size for small explicit paddings).
 - Ignore nearly transparent pixels by default (an `alphaThreshold` default above 0), so noise and antialiasing halos no longer get their own outline.
 
+## [Unreleased]
+
+### Added
+- `alphaThreshold` option: ignore nearly transparent pixels when finding outlines. The default `0` keeps the current behavior.
+
 ## [1.2.1]
 
 ### Fixed
