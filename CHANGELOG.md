@@ -9,7 +9,7 @@ These changes are breaking (the API or default output would change), so they are
 - Clamp `padding` to at least `strokeWidth / 2`, so the stroke is never clipped (this changes the output size for small explicit paddings).
 - Ignore nearly transparent pixels by default (an `alphaThreshold` default above 0), so noise and antialiasing halos no longer get their own outline.
 
-## [Unreleased]
+## [1.3.0]
 
 ### Added
 - Web Worker support: `createSticker` and `createStickerBlob` work with `OffscreenCanvas` when there is no DOM.
