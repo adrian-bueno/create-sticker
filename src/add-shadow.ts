@@ -1,3 +1,4 @@
+import { AnyCanvas, createCanvas, getContext2D } from "./canvas";
 import { StickerShadowOptions } from "./models";
 
 const defaultShadow: Required<StickerShadowOptions> = {
@@ -9,7 +10,7 @@ const defaultShadow: Required<StickerShadowOptions> = {
 
 // Draw the sticker on a new canvas with a drop shadow,
 // growing the canvas so the shadow is not clipped
-export function addShadow(sticker: HTMLCanvasElement, options: true | StickerShadowOptions): HTMLCanvasElement {
+export function addShadow(sticker: AnyCanvas, options: true | StickerShadowOptions): AnyCanvas {
   const shadow = { ...defaultShadow, ...(options === true ? {} : options) };
 
   // A canvas shadow blur spreads about 1.5 times its blur value
@@ -19,11 +20,8 @@ export function addShadow(sticker: HTMLCanvasElement, options: true | StickerSha
   const top = Math.max(0, Math.ceil(spread - shadow.offsetY));
   const bottom = Math.max(0, Math.ceil(spread + shadow.offsetY));
 
-  const canvas = document.createElement('canvas');
-  canvas.width = sticker.width + left + right;
-  canvas.height = sticker.height + top + bottom;
-
-  const ctx = canvas.getContext('2d')!;
+  const canvas = createCanvas(sticker.width + left + right, sticker.height + top + bottom);
+  const ctx = getContext2D(canvas);
   ctx.shadowColor = shadow.color;
   ctx.shadowBlur = shadow.blur;
   ctx.shadowOffsetX = shadow.offsetX;

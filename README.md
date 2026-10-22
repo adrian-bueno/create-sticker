@@ -11,7 +11,7 @@ Tested with `.png`, `.webp` and `.jpg`.
 
 Customize: `stroke color`, `stroke thickness`, `fill holes` and `image padding`.
 
-It uses HTML Canvas, so it only works in the browser (and not in Node.js).
+It uses HTML Canvas, so it only works in the browser (and not in Node.js). It also works in Web Workers (with `OffscreenCanvas`), to keep large images off the main thread.
 
 
 ## Install
@@ -109,6 +109,19 @@ All options are optional.
 - When `padding` is not set (or is less than `1`), it defaults to half the stroke width (`Math.ceil(strokeWidth / 2)`, minimum `1`).
 - When `padding` is set to `1` or more, that value is used as is. A value smaller than `strokeWidth / 2` can clip the stroke at the image edges.
 
+
+### Web Workers
+
+`createSticker` and `createStickerBlob` also work inside a Web Worker, so processing large images does not block the page. Pass a URL, `Blob`, `ImageBitmap` or `OffscreenCanvas` (DOM elements cannot be sent to workers). `createStickerCanvas` needs the DOM, so it rejects in workers.
+
+```ts
+// sticker.worker.ts
+import { createStickerBlob } from '@devadri/create-sticker';
+
+self.onmessage = async (event) => {
+  self.postMessage(await createStickerBlob(event.data.file, { strokeWidth: 20 }));
+};
+```
 
 ### Remote images (CORS)
 

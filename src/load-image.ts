@@ -1,4 +1,5 @@
 import { totalStrokeWidth } from "./add-sticker-effect";
+import { AnyContext2D, createCanvas, getContext2D } from "./canvas";
 import { CreateStickerOptions, ImageCanvas, StickerImageSource } from "./models";
 
 interface DrawableImage {
@@ -21,11 +22,9 @@ function limitSize(image: DrawableImage, maxSize?: number): DrawableImage {
   const width = Math.max(1, Math.round(image.width * scale));
   const height = Math.max(1, Math.round(image.height * scale));
 
-  const canvas = document.createElement('canvas');
-  canvas.width = width;
-  canvas.height = height;
+  const canvas = createCanvas(width, height);
 
-  const ctx = canvas.getContext('2d')!;
+  const ctx = getContext2D(canvas);
   ctx.imageSmoothingQuality = "high";
   ctx.drawImage(image.image, 0, 0, width, height);
 
@@ -33,13 +32,21 @@ function limitSize(image: DrawableImage, maxSize?: number): DrawableImage {
 }
 
 async function toDrawableImage(source: StickerImageSource, options?: CreateStickerOptions): Promise<DrawableImage> {
+  // Without the DOM (Web Workers) images are decoded with createImageBitmap
+  const hasDOM = typeof Image !== "undefined";
+
   if (typeof source === "string") {
     // Request remote images with CORS so their pixels can be read
     const crossOrigin = options?.crossOrigin === undefined ? defaultOptions.crossOrigin : options.crossOrigin;
-    return fromImageElement(await loadImageElement(source, crossOrigin));
+    return hasDOM
+      ? fromImageElement(await loadImageElement(source, crossOrigin))
+      : fromBitmap(await fetchImageBitmap(source, crossOrigin));
   }
 
   if (source instanceof Blob) {
+    if (!hasDOM)
+      return fromBitmap(await decodeBlob(source));
+
     const url = URL.createObjectURL(source);
     try {
       return fromImageElement(await loadImageElement(url, null));
@@ -48,12 +55,37 @@ async function toDrawableImage(source: StickerImageSource, options?: CreateStick
     }
   }
 
-  if (source instanceof HTMLImageElement) {
+  if (typeof HTMLImageElement !== "undefined" && source instanceof HTMLImageElement) {
     return fromImageElement(await waitForImageElement(source));
   }
 
   // Canvas or bitmap
-  return { image: source, width: source.width, height: source.height };
+  const drawable = source as HTMLCanvasElement | OffscreenCanvas | ImageBitmap;
+  return { image: drawable, width: drawable.width, height: drawable.height };
+}
+
+async function fetchImageBitmap(src: string, crossOrigin: string | null | undefined): Promise<ImageBitmap> {
+  let response: Response;
+  try {
+    response = await fetch(src, { mode: "cors", credentials: crossOrigin === "use-credentials" ? "include" : "same-origin" });
+  } catch (error) {
+    throw new Error("Error loading image", { cause: error });
+  }
+  if (!response.ok)
+    throw new Error("Error loading image");
+  return decodeBlob(await response.blob());
+}
+
+async function decodeBlob(blob: Blob): Promise<ImageBitmap> {
+  try {
+    return await createImageBitmap(blob);
+  } catch (error) {
+    throw new Error("Error loading image", { cause: error });
+  }
+}
+
+function fromBitmap(bitmap: ImageBitmap): DrawableImage {
+  return { image: bitmap, width: bitmap.width, height: bitmap.height };
 }
 
 function fromImageElement(img: HTMLImageElement): DrawableImage {
@@ -91,13 +123,10 @@ function waitForImageElement(img: HTMLImageElement): Promise<HTMLImageElement> {
 // The border ensures the contour algorithm works and that
 // the sticker stroke is not clipped at the edges.
 function buildImageCanvas({ image, width, height }: DrawableImage, options?: CreateStickerOptions): ImageCanvas {
-  const canvas = document.createElement('canvas');
-  const ctx = canvas.getContext('2d', { willReadFrequently: true })!;
-
   const padding = getPadding(options);
 
-  canvas.width = width + padding*2;
-  canvas.height = height + padding*2;
+  const canvas = createCanvas(width + padding*2, height + padding*2);
+  const ctx = getContext2D(canvas, { willReadFrequently: true });
 
   // Draw the image on canvas
   ctx.drawImage(image, padding, padding);
@@ -116,7 +145,7 @@ function buildImageCanvas({ image, width, height }: DrawableImage, options?: Cre
 }
 
 // A cross-origin image loaded without CORS taints the canvas and its pixels cannot be read
-function assertCanvasIsReadable(ctx: CanvasRenderingContext2D): void {
+function assertCanvasIsReadable(ctx: AnyContext2D): void {
   try {
     ctx.getImageData(0, 0, 1, 1);
   } catch (error) {

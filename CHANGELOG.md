@@ -12,6 +12,7 @@ These changes are breaking (the API or default output would change), so they are
 ## [Unreleased]
 
 ### Added
+- Web Worker support: `createSticker` and `createStickerBlob` work with `OffscreenCanvas` when there is no DOM.
 - `maxSize` option: scale large images down before adding the effect.
 - `trim` option: crop the result to its visible content.
 - `strokeHoles` option: with `fillHoles: false`, also stroke the inner edges of transparent holes and the elements inside them.

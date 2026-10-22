@@ -6,7 +6,7 @@ Guidance for AI coding agents working on this repository.
 
 `@devadri/create-sticker` is a small TypeScript library that adds a sticker effect (outline stroke, optional hole filling) to images with transparent backgrounds.
 
-- Browser-only: it relies on `HTMLCanvasElement`, `Image` and `CanvasRenderingContext2D`.
+- Browser-only (not Node.js). It works on the main thread (`HTMLCanvasElement`, `Image`) and in Web Workers (`OffscreenCanvas`, `createImageBitmap`). Always create canvases with `createCanvas`/`getContext2D` from `src/canvas.ts`, never `document.createElement`. `test/worker.test.ts` checks that worker output matches the main thread.
 - Zero runtime dependencies. Keep it that way.
 - Published from `dist/` (the build copies a trimmed `package.json`, `README.md` and `LICENSE.md` there), so `dist/` is the package root on npm/unpkg.
 - Entry points: `exports` selects `bundle.esm.mjs` (import) or `bundle.cjs.js` (require). `unpkg`/`jsdelivr` point at `bundle.iife.js` (global `CreateSticker`). The `./*` export keeps every file path importable. Do not remove it in 1.x.

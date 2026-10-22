@@ -1,8 +1,10 @@
+import { AnyCanvas, createCanvas, getContext2D } from "./canvas";
+
 // Crop a canvas to the bounding box of its non-transparent pixels.
 // A fully transparent canvas is returned unchanged.
-export function trimCanvas(canvas: HTMLCanvasElement): HTMLCanvasElement {
+export function trimCanvas(canvas: AnyCanvas): AnyCanvas {
   const { width, height } = canvas;
-  const data = canvas.getContext('2d')!.getImageData(0, 0, width, height).data;
+  const data = getContext2D(canvas).getImageData(0, 0, width, height).data;
 
   let minX = width, minY = height, maxX = -1, maxY = -1;
 
@@ -20,10 +22,8 @@ export function trimCanvas(canvas: HTMLCanvasElement): HTMLCanvasElement {
   if (maxX < 0)
     return canvas;
 
-  const trimmed = document.createElement('canvas');
-  trimmed.width = maxX - minX + 1;
-  trimmed.height = maxY - minY + 1;
-  trimmed.getContext('2d')!.drawImage(canvas, -minX, -minY);
+  const trimmed = createCanvas(maxX - minX + 1, maxY - minY + 1);
+  getContext2D(trimmed).drawImage(canvas, -minX, -minY);
 
   return trimmed;
 }

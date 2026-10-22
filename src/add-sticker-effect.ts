@@ -1,8 +1,9 @@
+import { AnyContext2D } from "./canvas";
 import { defineGeometryPath } from "./define-geometry-path";
 import { CreateStickerOptions, Point2D, StickerOutline } from "./models";
 
 // Stroke (and optionally fill) the outline of a discrete element
-export function addStickerLayer(ctx: CanvasRenderingContext2D, points: Point2D[], options: CreateStickerOptions): void {
+export function addStickerLayer(ctx: AnyContext2D, points: Point2D[], options: CreateStickerOptions): void {
   defineGeometryPath(ctx, points);
 
   ctx.lineJoin = "round";
@@ -18,7 +19,7 @@ export function addStickerLayer(ctx: CanvasRenderingContext2D, points: Point2D[]
 }
 
 // Stroke an outline layer centered on the element outline
-export function addOutlineLayer(ctx: CanvasRenderingContext2D, points: Point2D[], width: number, color: string): void {
+export function addOutlineLayer(ctx: AnyContext2D, points: Point2D[], width: number, color: string): void {
   defineGeometryPath(ctx, points);
 
   ctx.lineJoin = "round";

@@ -2,6 +2,7 @@ import { addShadow } from "./add-shadow";
 import { addOutlineLayer, addStickerLayer, totalStrokeWidth } from "./add-sticker-effect";
 import { d3GeometryContour, d3GeometryContourStart } from "./d3-geometry-contour";
 import { boundingBox } from "./bounding-box";
+import { AnyCanvas, AnyContext2D, canvasToBlob, canvasToDataURL, createCanvas, getContext2D } from "./canvas";
 import { defineGeometryPath } from "./define-geometry-path";
 import { findInnerContours } from "./inner-contours";
 import { loadImage } from "./load-image";
@@ -11,30 +12,29 @@ import { CreateStickerOptions, DiscreteElement, ImageCanvas, StickerImageSource 
 
 /** Create a sticker and return it as a data URL (PNG by default, see `outputType`) */
 export async function createSticker(image: StickerImageSource, options?: CreateStickerOptions): Promise<string> {
-  const canvas = await createStickerCanvas(image, options);
-  return canvas.toDataURL(options?.outputType ?? 'image/png', options?.outputQuality ?? 1);
+  const canvas = await renderSticker(image, options);
+  return canvasToDataURL(canvas, options?.outputType ?? 'image/png', options?.outputQuality ?? 1);
 }
 
 /** Create a sticker and return it as a Blob (PNG by default, see `outputType`) */
 export async function createStickerBlob(image: StickerImageSource, options?: CreateStickerOptions): Promise<Blob> {
-  const canvas = await createStickerCanvas(image, options);
-  return new Promise((resolve, reject) => {
-    canvas.toBlob(
-      blob => blob ? resolve(blob) : reject(new Error("Error encoding sticker image")),
-      options?.outputType ?? 'image/png',
-      options?.outputQuality ?? 1
-    );
-  });
+  const canvas = await renderSticker(image, options);
+  return canvasToBlob(canvas, options?.outputType ?? 'image/png', options?.outputQuality ?? 1);
 }
 
-/** Create a sticker and return it as a canvas */
+/** Create a sticker and return it as a canvas. Needs the DOM (not available in Web Workers) */
 export async function createStickerCanvas(image: StickerImageSource, options?: CreateStickerOptions): Promise<HTMLCanvasElement> {
+  if (typeof document === "undefined")
+    throw new Error("createStickerCanvas needs the DOM. In Web Workers use createSticker or createStickerBlob.");
+
+  return await renderSticker(image, options) as HTMLCanvasElement;
+}
+
+async function renderSticker(image: StickerImageSource, options?: CreateStickerOptions): Promise<AnyCanvas> {
   const imageCanvas = await loadImage(image, options);
 
-  const stickerCanvas = document.createElement('canvas');
-  stickerCanvas.width = imageCanvas.width;
-  stickerCanvas.height = imageCanvas.height;
-  const stickerCanvasCtx = stickerCanvas.getContext('2d')!;
+  const stickerCanvas = createCanvas(imageCanvas.width, imageCanvas.height);
+  const stickerCanvasCtx = getContext2D(stickerCanvas);
 
   const elems = findDiscreteElements(imageCanvas);
 
@@ -80,7 +80,7 @@ export async function createStickerCanvas(image: StickerImageSource, options?: C
 
 // Draw just the pixels of a discrete element (from the source image,
 // as the image canvas has all elements removed)
-function drawDiscreteElement(ctx: CanvasRenderingContext2D, imageCanvas: ImageCanvas, elem: DiscreteElement): void {
+function drawDiscreteElement(ctx: AnyContext2D, imageCanvas: ImageCanvas, elem: DiscreteElement): void {
   const { x, y, width, height } = elem.bounds;
   const p = imageCanvas.padding;
   defineGeometryPath(ctx, elem.points);
