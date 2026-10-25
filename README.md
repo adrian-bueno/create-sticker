@@ -2,6 +2,8 @@
 
 **Library that adds a sticker effect to images with transparent backgrounds.**
 
+**[Try the live demo](https://adrian-bueno.github.io/create-sticker/)**
+
 
 ![Header image](./docs/readme-header.png)
 
@@ -136,7 +138,9 @@ The image pixels must be readable, so images from another origin must be served 
 
 ## Demo
 
-Run the demo with the following commands:
+Try it online: **https://adrian-bueno.github.io/create-sticker/**
+
+To run the demo locally:
 
 ```sh
 npm run build
