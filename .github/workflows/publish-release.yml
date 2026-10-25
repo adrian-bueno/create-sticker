@@ -47,7 +47,13 @@ jobs:
         run: npm run build
 
       # Authenticates with OIDC (trusted publishing), no npm token needed.
-      # Provenance is generated automatically.
-      - name: Publish to npm
+      # The version is only staged: a maintainer must approve it with 2FA on
+      # npmjs.com (Staged Packages tab) or with `npm stage approve <stage-id>`.
+      - name: Stage release on npm
         working-directory: dist
-        run: npm publish --access public
+        run: npm stage publish
+
+      - name: Ask for approval
+        run: |
+          echo "### npm release staged" >> "$GITHUB_STEP_SUMMARY"
+          echo "Approve ${GITHUB_REF_NAME} on npmjs.com (Staged Packages tab) or run \`npm stage approve <stage-id>\` to publish it." >> "$GITHUB_STEP_SUMMARY"

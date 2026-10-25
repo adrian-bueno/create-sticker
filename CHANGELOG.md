@@ -19,7 +19,7 @@ These changes are breaking (the API or default output would change), so they are
 - The root `package.json` is `private` and the `publish` script is renamed to `release`. Before, running `npm publish` in the repo root would publish the wrong package.
 - Visual snapshot tests (Vitest browser mode) and a CI workflow for pushes and PRs.
 - The publish workflow uses `npm ci`, checks that the tag matches the `package.json` version and runs tests before publishing.
-- The publish workflow uses npm trusted publishing (OIDC) instead of an npm token.
+- The publish workflow uses npm trusted publishing (OIDC) instead of an npm token, and only stages releases: a maintainer approves each version with 2FA before it is published.
 - Updated development dependencies (including `npm audit fix`) and the Node.js version in `.nvmrc`.
 
 ## [1.2.0]
