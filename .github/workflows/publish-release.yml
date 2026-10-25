@@ -10,11 +10,13 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       id-token: write  # Required for npm trusted publishing (OIDC)
-      contents: read
+      contents: write  # Required to create the GitHub Release
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Tags are needed to link the previous release
 
       - name: Set up Node.js
         uses: actions/setup-node@v4
@@ -29,6 +31,24 @@ jobs:
           if [ "${GITHUB_REF_NAME#v}" != "$PKG_VERSION" ]; then
             echo "Tag $GITHUB_REF_NAME does not match package.json version $PKG_VERSION"
             exit 1
+          fi
+
+      # Fails early if CHANGELOG.md has no section for this version
+      - name: Extract release notes from CHANGELOG.md
+        run: |
+          VERSION="${GITHUB_REF_NAME#v}"
+          awk -v heading="## [$VERSION]" '
+            $0 == heading { found = 1; next }
+            found && /^## / { exit }
+            found { print }
+          ' CHANGELOG.md > release-notes.md
+          if ! grep -q '[^[:space:]]' release-notes.md; then
+            echo "CHANGELOG.md has no section for $VERSION"
+            exit 1
+          fi
+          PREVIOUS_TAG=$(git describe --tags --abbrev=0 "$GITHUB_REF_NAME^" 2>/dev/null || true)
+          if [ -n "$PREVIOUS_TAG" ]; then
+            printf '\n**Full changelog:** %s/%s/compare/%s...%s\n' "$GITHUB_SERVER_URL" "$GITHUB_REPOSITORY" "$PREVIOUS_TAG" "$GITHUB_REF_NAME" >> release-notes.md
           fi
 
       - name: Install dependencies
@@ -57,3 +77,8 @@ jobs:
         run: |
           echo "### npm release staged" >> "$GITHUB_STEP_SUMMARY"
           echo "Approve ${GITHUB_REF_NAME} on npmjs.com (Staged Packages tab) or run \`npm stage approve <stage-id>\` to publish it." >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Create GitHub Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh release create "$GITHUB_REF_NAME" --verify-tag --title "$GITHUB_REF_NAME" --notes-file release-notes.md

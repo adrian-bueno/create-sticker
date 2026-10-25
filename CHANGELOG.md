@@ -31,6 +31,9 @@ These changes are breaking (the API or default output would change), so they are
 - Faster sticker generation (one pixel read, a single output canvas). The output is pixel-identical: about 3x faster on large images and over 100x faster on images with many separate shapes.
 - The package declares `"sideEffects": false` for better tree shaking.
 
+### Changed (repository only, no effect on the published package)
+- Each release tag also creates a GitHub Release, with that version's CHANGELOG section as the notes.
+
 ## [1.2.1]
 
 ### Fixed
