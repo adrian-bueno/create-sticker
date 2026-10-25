@@ -11,9 +11,7 @@
 
 Tested with `.png`, `.webp` and `.jpg`.
 
-Customize the stroke color and width, hole filling or stroking, extra outlines, a drop shadow, padding and trimming. See [Options](#options).
-
-It uses HTML Canvas, so it only works in the browser (not in Node.js). It also works in Web Workers (with `OffscreenCanvas`), to keep large images off the main thread.
+It uses HTML Canvas, so it only works in the browser (and not in Node.js).
 
 
 ## Install
@@ -41,7 +39,6 @@ npm install @devadri/create-sticker
     const options = {
       strokeWidth: 20,
       strokeColor: "black",
-      padding: 20,
       fillHoles: true
     }
     const stickerImgSrc = await CreateSticker.createSticker(img.src, options);
@@ -59,7 +56,6 @@ async function modifyImage(img) {
   const options: CreateStickerOptions = {
     strokeWidth: 20,
     strokeColor: "black",
-    padding: 20,
     fillHoles: true
   }
   const stickerImgSrc = await createSticker(img.src, options);
@@ -69,85 +65,36 @@ async function modifyImage(img) {
 
 ## API
 
-### `createSticker(image, options?)`
+| Function | Returns |
+|---|---|
+| `createSticker(image, options?)` | `Promise<string>`: data URL |
+| `createStickerBlob(image, options?)` | `Promise<Blob>` |
+| `createStickerCanvas(image, options?)` | `Promise<HTMLCanvasElement>` |
 
-- `image`: one of
-  - `string`: any URL an `<img>` can load (http(s), data URL, blob URL)
-  - `Blob` / `File` (for example from an `<input type="file">`)
-  - `HTMLImageElement`: loaded or still loading; its natural size is used
-  - `HTMLCanvasElement`, `OffscreenCanvas` or `ImageBitmap`
-- Returns `Promise<string>`: a data URL of the sticker image (PNG unless `outputType` is set).
-
-### `createStickerBlob(image, options?)`
-
-Same as `createSticker`, but returns a `Promise<Blob>`. Encoding a Blob is cheaper than a base64 data URL, which makes it better for uploads and downloads. To display it, use `URL.createObjectURL(blob)`.
-
-### `createStickerCanvas(image, options?)`
-
-Same as `createSticker`, but returns the `Promise<HTMLCanvasElement>` without encoding it. Use it to keep drawing on the result.
+`image` can be an image URL, a `Blob`/`File`, an `HTMLImageElement`, an `HTMLCanvasElement`, an `OffscreenCanvas` or an `ImageBitmap`.
 
 ### Options
 
 All options are optional.
 
-| Option | Type | Default | Description |
-|---|---|---|---|
-| `strokeWidth` | `number` | `20` | Width of the outline, in pixels. |
-| `strokeColor` | `string` | `"white"` | Any CSS color. |
-| `fillHoles` | `boolean` | `true` | Fill transparent holes inside an object with `strokeColor`. |
-| `strokeHoles` | `boolean` | `false` | When `fillHoles` is `false`, also stroke the inner edges of holes and the elements inside them. |
-| `padding` | `number` | half the stroke width (plus `outlines`) | Transparent space added around the image, in pixels (see below). |
-| `alphaThreshold` | `number` | `0` | Pixels with alpha (0-255) at or below this value are ignored when finding outlines, so faint noise or antialiasing halos do not get their own outline. They are still drawn. Try `10`-`20` for photos or lossy images. |
-| `crossOrigin` | `"anonymous" \| "use-credentials" \| null` | `"anonymous"` | CORS mode used to load the image. Use `null` to not set it. |
-| `outlines` | `{ width, color }[]` | `[]` | Extra outlines around the stroke, from inner to outer, for example `[{ width: 3, color: "#999" }]` for a thin grey border. Each `width` is added outside the previous outline. Touching elements share the outlines. |
-| `shadow` | `boolean \| { color?, blur?, offsetX?, offsetY? }` | none | Drop shadow under the whole sticker. `true` uses `{ color: "rgba(0, 0, 0, 0.4)", blur: 8, offsetX: 0, offsetY: 4 }`. The image grows so the shadow is not clipped. |
-| `maxSize` | `number` | no limit | Scale the image down (keeping its aspect ratio) so neither side is larger than this, before adding the effect. Stroke width and padding are not scaled. Useful for large photos. |
-| `trim` | `boolean` | `false` | Crop the result to its visible content, removing transparent margins (extra `padding` or transparent borders in the source image). |
-| `outputType` | `string` | `"image/png"` | Format of the `createSticker`/`createStickerBlob` result, for example `"image/webp"`. Formats the browser cannot encode fall back to PNG. |
-| `outputQuality` | `number` | `1` | Quality from 0 to 1 for lossy formats (`image/jpeg`, `image/webp`). |
-
-`padding` is the transparent space added around the image, so the stroke is not clipped at the edges. The output image is `padding * 2` pixels wider and taller than the input.
-
-- When `padding` is not set (or is less than `1`), it defaults to half the stroke width (`Math.ceil(strokeWidth / 2)`, minimum `1`).
-- When `padding` is set to `1` or more, that value is used as is. A value smaller than `strokeWidth / 2` can clip the stroke at the image edges.
+| Option | Default | Description |
+|---|---|---|
+| `strokeWidth` | `20` | Stroke width in pixels. |
+| `strokeColor` | `"white"` | Stroke color (any CSS color). |
+| `fillHoles` | `true` | Fill transparent holes with the stroke color. |
+| `strokeHoles` | `false` | When `fillHoles` is `false`, also add the stroke around holes. |
+| `outlines` | `[]` | Extra outlines around the stroke, e.g. `[{ width: 3, color: "#999" }]`. |
+| `shadow` | `false` | Drop shadow. `true` or `{ color, blur, offsetX, offsetY }`. |
+| `padding` | `strokeWidth / 2` | Transparent space added around the image, in pixels. |
+| `trim` | `false` | Crop the result to its visible content. |
+| `maxSize` | none | Scale down images larger than this (in pixels) before processing. |
+| `alphaThreshold` | `0` | Ignore pixels with alpha (0-255) at or below this value when finding outlines. |
+| `crossOrigin` | `"anonymous"` | CORS mode for image URLs. Remote images must allow CORS. |
+| `outputType` | `"image/png"` | Output format, e.g. `"image/webp"`. |
+| `outputQuality` | `1` | Quality (0 to 1) for lossy formats. |
 
 
-### Web Workers
-
-`createSticker` and `createStickerBlob` also work inside a Web Worker, so processing large images does not block the page. Pass a URL, `Blob`, `ImageBitmap` or `OffscreenCanvas` (DOM elements cannot be sent to workers). `createStickerCanvas` needs the DOM, so it rejects in workers.
-
-```ts
-// sticker.worker.ts
-import { createStickerBlob } from '@devadri/create-sticker';
-
-self.onmessage = async (event) => {
-  self.postMessage(await createStickerBlob(event.data.file, { strokeWidth: 20 }));
-};
-```
-
-### Remote images (CORS)
-
-The image pixels must be readable, so images from another origin must be served with CORS headers (`Access-Control-Allow-Origin`). Without them, `createSticker` rejects with an explanatory error. Images loaded from data URLs, blob URLs or the same origin always work.
-
-
-### Browser support
-
-- Main thread: any modern browser (Canvas 2D).
-- Web Workers: browsers with `OffscreenCanvas` 2D support (Chrome 69+, Firefox 105+, Safari 16.4+).
-
-
-## Demo
-
-Try it online: **https://adrian-bueno.github.io/create-sticker/**
-
-To run the demo locally:
-
-```sh
-npm run build
-npm run demo
-```
-
-### Screenshots
+## Screenshots
 
 ![Demo screenshot 1](./docs/demo-screenshot-1.png)
 ![Demo screenshot 2](./docs/demo-screenshot-2.png)
