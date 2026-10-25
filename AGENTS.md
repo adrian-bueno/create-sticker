@@ -54,6 +54,7 @@ The first test run needs a browser: `npx playwright install chromium`.
 ## Rules
 
 - **Keep 1.x non-breaking.** No changes to existing function signatures or return types, and no changes to the default output (image size or pixels). New behavior must be opt-in through options whose defaults keep the current result. Record breaking ideas under "Planned for 2.0" in the CHANGELOG instead of implementing them.
+- **Never commit without approval.** Leave changes uncommitted until the maintainer has reviewed and approved them, then commit only what was approved.
 - **One change per commit.** Do not mix unrelated changes.
 - **Validate before committing.** Type-check, test and build. For visual changes, also check the demo. Never commit a broken state.
 - **Never push, tag or publish.** No `git push`, no `git tag`, no `npm publish`. Pushing a `v*.*.*` tag triggers `.github/workflows/publish-release.yml`, which publishes to npm. Releases are done by the maintainer.
