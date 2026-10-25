@@ -9,7 +9,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     permissions:
-      id-token: write
+      id-token: write  # Required for npm trusted publishing (OIDC)
       contents: read
 
     steps:
@@ -19,9 +19,9 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '24.x'
+          # Trusted publishing needs npm >= 11.5.1 (Node 24.21.0 ships npm 11.19.0)
+          node-version-file: '.nvmrc'
           registry-url: 'https://registry.npmjs.org'
-          scope: '@devadri'
 
       - name: Check tag matches package.json version
         run: |
@@ -46,10 +46,8 @@ jobs:
       - name: Build the package
         run: npm run build
 
+      # Authenticates with OIDC (trusted publishing), no npm token needed.
+      # Provenance is generated automatically.
       - name: Publish to npm
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-        run: |
-          npm config set //registry.npmjs.org/:_authToken=$NODE_AUTH_TOKEN
-          cd dist
-          npm publish --provenance --access public
+        working-directory: dist
+        run: npm publish --access public

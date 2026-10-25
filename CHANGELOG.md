@@ -12,6 +12,7 @@ All notable changes to this project are documented in this file. The format is b
 - The root `package.json` is `private` and the `publish` script is renamed to `release`. Before, running `npm publish` in the repo root would publish the wrong package.
 - Visual snapshot tests (Vitest browser mode) and a CI workflow for pushes and PRs.
 - The publish workflow uses `npm ci`, checks that the tag matches the `package.json` version and runs tests before publishing.
+- The publish workflow uses npm trusted publishing (OIDC) instead of an npm token.
 
 ## Planned for 2.0
 
