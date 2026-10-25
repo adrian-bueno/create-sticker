@@ -1,17 +1,14 @@
 # @devadri/create-sticker
 
-**Library that adds a sticker effect to images with transparent backgrounds.**
-
-**[Try the live demo](https://adrian-bueno.github.io/create-sticker/)**
-
-
 ![Header image](./docs/readme-header.png)
 
-> This code was made thanks to [this Stack Overflow answer](https://stackoverflow.com/a/24091727) made by the user [markE](https://stackoverflow.com/users/411591/marke).
+**Library that adds a sticker effect to images with transparent backgrounds.**
 
 Tested with `.png`, `.webp` and `.jpg`.
 
 It uses HTML Canvas, so it only works in the browser (and not in Node.js).
+
+**[Try the live demo](https://adrian-bueno.github.io/create-sticker/)**
 
 
 ## Install
@@ -108,3 +105,8 @@ All options are optional.
 ## License
 
 [Unlicense license](./LICENSE.md)
+
+
+## Acknowledgments
+
+The original code comes from [this Stack Overflow answer](https://stackoverflow.com/a/24091727) by [markE](https://stackoverflow.com/users/411591/marke). Adrián Bueno took that code, rewrote it in TypeScript and prepared it for publishing. The latest improvements were made with [Claude Code](https://claude.com/claude-code).
