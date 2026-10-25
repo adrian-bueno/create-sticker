@@ -2,6 +2,13 @@
 
 All notable changes to this project are documented in this file. The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project follows [Semantic Versioning](https://semver.org/).
 
+## Planned for 2.0
+
+These changes are breaking (the API or default output would change), so they are postponed to the next major version:
+
+- Clamp `padding` to at least `strokeWidth / 2`, so the stroke is never clipped (this changes the output size for small explicit paddings).
+- Ignore nearly transparent pixels by default (an `alphaThreshold` default above 0), so noise and antialiasing halos no longer get their own outline.
+
 ## [1.2.1]
 
 ### Fixed
@@ -13,12 +20,35 @@ All notable changes to this project are documented in this file. The format is b
 - Visual snapshot tests (Vitest browser mode) and a CI workflow for pushes and PRs.
 - The publish workflow uses `npm ci`, checks that the tag matches the `package.json` version and runs tests before publishing.
 - The publish workflow uses npm trusted publishing (OIDC) instead of an npm token.
+- Updated development dependencies (including `npm audit fix`) and the Node.js version in `.nvmrc`.
 
-## Planned for 2.0
+## [1.2.0]
 
-These changes are breaking (the API or default output would change), so they are postponed to the next major version:
+### Fixed
+- Images were shrunk by the padding size, and the sticker layers were drawn with the wrong offsets and sizes, which distorted the result.
+- A race condition could read the sticker canvases before their content was drawn.
+- The `strokeWidth` JSDoc said the default was `10`. The actual default is `20`.
+- The `license` field in `package.json` is now the valid SPDX identifier `Unlicense`.
 
-- Clamp `padding` to at least `strokeWidth / 2`, so the stroke is never clipped (this changes the output size for small explicit paddings).
-- Ignore nearly transparent pixels by default (an `alphaThreshold` default above 0), so noise and antialiasing halos no longer get their own outline.
+### Changed
+- When `padding` is not set, it now defaults to half the stroke width (minimum `1`) instead of `1`, so the stroke is not clipped at the image edges. Output images are larger when `padding` is not set.
 
-Earlier versions: see the [git history](https://github.com/adrian-bueno/create-sticker/commits/main).
+## [1.1.0]
+
+### Added
+- `fillHoles` option (default `true`): fill transparent holes inside an object with the stroke color.
+
+## [1.0.1]
+
+### Fixed
+- The README unpkg URL pointed at a non-existent `/dist/` path.
+
+### Changed
+- Added npm keywords to make the package easier to find.
+
+## [1.0.0]
+
+### Added
+- First release. `createSticker(imageSrc, options)` adds a sticker outline around each shape of an image with a transparent background and returns a PNG data URL.
+- Options: `strokeWidth` (default `20`), `strokeColor` (default `"white"`) and `padding` (default `1`).
+- Browser (IIFE, global `CreateSticker`) and ESM bundles, with TypeScript types.
