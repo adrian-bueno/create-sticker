@@ -2,7 +2,7 @@
 
 All notable changes to this project are documented in this file. The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project follows [Semantic Versioning](https://semver.org/).
 
-## [1.2.1] - 2026-10-22
+## [1.2.1]
 
 ### Fixed
 - The README CDN snippets pointed at a non-existent `/dist/bundle.iife.js` path or contained a `{{ version }}` placeholder.
