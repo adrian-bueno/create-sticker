@@ -14,12 +14,12 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           fetch-depth: 0  # Tags are needed to link the previous release
 
       - name: Set up Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v5
         with:
           # Trusted publishing needs npm >= 11.5.1 (Node 24.21.0 ships npm 11.19.0)
           node-version-file: '.nvmrc'
